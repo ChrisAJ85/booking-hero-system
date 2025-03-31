@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -30,8 +29,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Dashboard = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -43,8 +47,12 @@ const Dashboard = () => {
   const [showMissingEmanifestDialog, setShowMissingEmanifestDialog] = useState(false);
   
   useEffect(() => {
-    if (location.state && location.state.formType) {
-      setActiveForm(location.state.formType);
+    if (location.state) {
+      if (location.state.activeForm) {
+        setActiveForm(location.state.activeForm);
+      } else if (location.state.formType) {
+        setActiveForm(location.state.formType);
+      }
       window.history.replaceState({}, document.title);
     }
     
@@ -120,7 +128,6 @@ const Dashboard = () => {
   };
 
   const handleJobCreated = () => {
-    // Add any logic needed after job creation
     setActiveForm(null);
     const loadedJobs = JobStore.getJobs();
     setJobs(loadedJobs);
@@ -132,51 +139,36 @@ const Dashboard = () => {
     switch (activeForm) {
       case 'job':
         return (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4">New Job</h2>
-              <JobForm />
-              <Button 
-                variant="outline" 
-                onClick={handleCloseForm}
-                className="mt-4"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
+          <Dialog open={true} onOpenChange={(open) => !open && handleCloseForm()}>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>New Job</DialogTitle>
+              </DialogHeader>
+              <JobForm onClose={handleCloseForm} />
+            </DialogContent>
+          </Dialog>
         );
       case 'file':
         return (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4">Book via File</h2>
-              <FileUploadJobForm />
-              <Button 
-                variant="outline" 
-                onClick={handleCloseForm}
-                className="mt-4"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
+          <Dialog open={true} onOpenChange={(open) => !open && handleCloseForm()}>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>Book via File</DialogTitle>
+              </DialogHeader>
+              <FileUploadJobForm onClose={handleCloseForm} />
+            </DialogContent>
+          </Dialog>
         );
       case 'ucid':
         return (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4">Request New UCID</h2>
-              <UCIDRequestForm />
-              <Button 
-                variant="outline" 
-                onClick={handleCloseForm}
-                className="mt-4"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
+          <Dialog open={true} onOpenChange={(open) => !open && handleCloseForm()}>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>Request New UCID</DialogTitle>
+              </DialogHeader>
+              <UCIDRequestForm onClose={handleCloseForm} />
+            </DialogContent>
+          </Dialog>
         );
       default:
         return null;

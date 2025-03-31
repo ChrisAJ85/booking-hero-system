@@ -1,13 +1,16 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, FileUp } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/utils/auth';
 import { JobStore } from '@/utils/data';
 
-const FileUploadJobForm: React.FC = () => {
+interface FileUploadJobFormProps {
+  onClose?: () => void;
+}
+
+const FileUploadJobForm: React.FC<FileUploadJobFormProps> = ({ onClose }) => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,6 +119,10 @@ const FileUploadJobForm: React.FC = () => {
         title: "Job Created via File Upload",
         description: `Job ${newJob.reference} has been created successfully from ${file.name}.`,
       });
+
+      if (onClose) {
+        onClose();
+      }
     }, 1500);
   };
 
@@ -152,6 +159,15 @@ const FileUploadJobForm: React.FC = () => {
       </div>
       
       <div className="flex justify-end space-x-2 pt-4">
+        {onClose && (
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+        )}
         <Button 
           type="submit" 
           className="bg-jobBlue hover:bg-jobBlue-light"

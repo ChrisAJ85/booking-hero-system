@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from 'react-router-dom';
 import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush, PlusCircle, FileUp, File } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -69,7 +70,7 @@ const Sidebar: React.FC = () => {
 
   const handleFormNavigation = (formType: string) => {
     navigate('/dashboard', { 
-      state: { formType }
+      state: { activeForm: formType, openForm: true }
     });
   };
 
