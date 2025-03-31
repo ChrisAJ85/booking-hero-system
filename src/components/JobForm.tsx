@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { JobStore, ClientStore, Client } from '@/utils/data';
+import { JobStore, ClientStore, Client, Job } from '@/utils/data';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/utils/auth';
 
@@ -32,7 +31,7 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
   const [clientName, setClientName] = useState('');
   const [subClientName, setSubClientName] = useState('');
   const [collectionDate, setCollectionDate] = useState<Date | undefined>();
-  const [status, setStatus] = useState('pending');
+  const [status, setStatus] = useState<Job['status']>('pending');
   const [notes, setNotes] = useState('');
   const [isSubClient, setIsSubClient] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
@@ -232,7 +231,7 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
       
       <div>
         <Label htmlFor="status">Status</Label>
-        <Select value={status} onValueChange={setStatus}>
+        <Select value={status} onValueChange={(value: Job['status']) => setStatus(value)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select a status" />
           </SelectTrigger>
