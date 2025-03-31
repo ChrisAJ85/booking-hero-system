@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -116,6 +117,13 @@ const Dashboard = () => {
 
   const handleCloseForm = () => {
     setActiveForm(null);
+  };
+
+  const handleJobCreated = () => {
+    // Add any logic needed after job creation
+    setActiveForm(null);
+    const loadedJobs = JobStore.getJobs();
+    setJobs(loadedJobs);
   };
 
   const renderActiveForm = () => {
