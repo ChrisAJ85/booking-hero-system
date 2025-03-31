@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush, PlusCircle, FileUp, File } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -69,17 +68,14 @@ const Sidebar: React.FC = () => {
   ];
 
   const handleFormNavigation = (formType: string) => {
-    // Using navigate with query parameters - this won't cause a full page reload
-    navigate({
-      pathname: '/dashboard',
-      search: `?form=${formType}`
+    navigate('/dashboard', { 
+      state: { formType }
     });
   };
 
   return (
     <div className="w-64 bg-jobGray-lighter border-r border-jobGray min-h-screen flex flex-col">
       <div className="flex flex-col p-4 h-full">
-        {/* Logo and User Info */}
         <div className="py-6 px-4 text-center border-b border-jobGray mb-4">
           <img 
             src="/lovable-uploads/9bd772b9-fc9d-467e-b936-39e8438d452d.png" 
@@ -96,7 +92,6 @@ const Sidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="mb-6 flex flex-col space-y-2 px-2">
           <Button 
             className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90"
@@ -125,7 +120,6 @@ const Sidebar: React.FC = () => {
           </Button>
         </div>
 
-        {/* Navigation Menu */}
         <div className="space-y-1 flex-grow">
           {navItems
             .filter(item => item.allowed)
@@ -146,7 +140,6 @@ const Sidebar: React.FC = () => {
             ))}
         </div>
 
-        {/* Recent Activity */}
         <div className="mt-auto pt-4 border-t border-jobGray mt-4">
           <div className="text-xs text-jobGray-dark">
             <div className="flex items-center mb-2 px-4">

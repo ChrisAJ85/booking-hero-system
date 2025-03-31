@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import JobForm from '@/components/JobForm';
 import FileUploadJobForm from '@/components/FileUploadJobForm';
@@ -35,11 +35,18 @@ import {
 const Dashboard = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [activeTab, setActiveTab] = useState('all');
+  const [activeForm, setActiveForm] = useState<string | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showMissingEmanifestDialog, setShowMissingEmanifestDialog] = useState(false);
   
   useEffect(() => {
+    if (location.state && location.state.formType) {
+      setActiveForm(location.state.formType);
+      window.history.replaceState({}, document.title);
+    }
+    
     const loadedJobs = JobStore.getJobs();
     const updatedJobs = loadedJobs.map(job => {
       if (job.id === '1' && !job.emanifestId) {
@@ -55,7 +62,7 @@ const Dashboard = () => {
     });
     JobStore.saveJobs(updatedJobs);
     setJobs(updatedJobs);
-  }, []);
+  }, [location]);
   
   const filteredJobs = () => {
     if (activeTab === 'all') return jobs;
@@ -107,6 +114,67 @@ const Dashboard = () => {
     }
   };
 
+  const handleCloseForm = () => {
+    setActiveForm(null);
+  };
+
+  const renderActiveForm = () => {
+    if (!activeForm) return null;
+    
+    switch (activeForm) {
+      case 'job':
+        return (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+              <h2 className="text-xl font-bold mb-4">New Job</h2>
+              <JobForm onClose={handleCloseForm} />
+              <Button 
+                variant="outline" 
+                onClick={handleCloseForm}
+                className="mt-4"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        );
+      case 'file':
+        return (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+              <h2 className="text-xl font-bold mb-4">Book via File</h2>
+              <FileUploadJobForm onClose={handleCloseForm} />
+              <Button 
+                variant="outline" 
+                onClick={handleCloseForm}
+                className="mt-4"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        );
+      case 'ucid':
+        return (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+              <h2 className="text-xl font-bold mb-4">Request New UCID</h2>
+              <UCIDRequestForm onClose={handleCloseForm} />
+              <Button 
+                variant="outline" 
+                onClick={handleCloseForm}
+                className="mt-4"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen flex">
       <Sidebar />
@@ -115,11 +183,6 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-              <div className="hidden">
-                <JobForm />
-                <FileUploadJobForm />
-                <UCIDRequestForm />
-              </div>
             </div>
             
             {hasMissingEmanifests && (
@@ -552,6 +615,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {renderActiveForm()}
 
       <AlertDialog open={showMissingEmanifestDialog} onOpenChange={setShowMissingEmanifestDialog}>
         <AlertDialogContent className="max-w-3xl">
