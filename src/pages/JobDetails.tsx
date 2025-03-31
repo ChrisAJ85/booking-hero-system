@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -7,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Download, FileText, MapPin, Building, Package, Paperclip, Truck, User, Users } from 'lucide-react';
+import { Calendar, Clock, Download, FileText, MapPin, Building, Paperclip, Truck, User, Users } from 'lucide-react';
 import { Job, JobStore, getJobById } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
 import { format } from 'date-fns';
@@ -25,7 +24,6 @@ const JobDetails = () => {
   useEffect(() => {
     if (jobId) {
       console.log("Looking for job with ID:", jobId);
-      // Get all jobs and check if any match the ID
       const allJobs = JobStore.getJobs();
       console.log("All jobs:", allJobs.map(j => ({ id: j.id, title: j.title })));
       
@@ -53,7 +51,6 @@ const JobDetails = () => {
           description: "Job not found. Redirecting to dashboard...",
           variant: "destructive"
         });
-        // Add a small delay before navigating to allow the toast to be seen
         setTimeout(() => navigate('/dashboard'), 1500);
       }
       setLoading(false);
@@ -179,20 +176,17 @@ const JobDetails = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2 space-y-6">
-                {/* Main job details card */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Job Details</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {/* Basic job information */}
                       <div>
                         <h3 className="text-sm font-medium text-gray-500">Description</h3>
                         <p className="mt-1">{getCleanDescription()}</p>
                       </div>
                       
-                      {/* Client information section */}
                       <div className="pt-2 border-t">
                         <h3 className="text-md font-medium pb-2">Client Information</h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -217,7 +211,6 @@ const JobDetails = () => {
                         </div>
                       </div>
                       
-                      {/* Schedule section */}
                       <div className="pt-2 border-t">
                         <h3 className="text-md font-medium pb-2">Schedule</h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -238,282 +231,236 @@ const JobDetails = () => {
                         </div>
                       </div>
                       
-                      {/* Item details section */}
-                      <div className="pt-2 border-t">
-                        <h3 className="text-md font-medium pb-2">Item Details</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">Item Count</h3>
-                            <p className="mt-1 flex items-center">
-                              <Package className="h-4 w-4 mr-1 text-jobBlue" />
-                              {job?.itemCount || 0}
-                            </p>
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-500">Bag Count</h3>
-                            <p className="mt-1 flex items-center">
-                              <Package className="h-4 w-4 mr-1 text-jobBlue" />
-                              {job?.bagCount || 0}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Custom Fields Section */}
                       {customFields && (
                         <>
-                          {/* Customer Information */}
-                          {(customFields.customerName || customFields.subClientName || customFields.mailingHouse || customFields.jobName || customFields.poNumber) && (
-                            <div className="pt-2 border-t">
-                              <h3 className="text-md font-medium pb-2">Additional Customer Information</h3>
-                              <div className="grid grid-cols-2 gap-4">
-                                {customFields.customerName && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Customer Name</h3>
-                                    <p className="mt-1">{customFields.customerName}</p>
-                                  </div>
-                                )}
-                                {customFields.mailingHouse && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Mailing House</h3>
-                                    <p className="mt-1">{customFields.mailingHouse}</p>
-                                  </div>
-                                )}
-                                {customFields.jobName && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Job Name</h3>
-                                    <p className="mt-1">{customFields.jobName}</p>
-                                  </div>
-                                )}
-                                {customFields.poNumber && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">PO Number</h3>
-                                    <p className="mt-1">{customFields.poNumber}</p>
-                                  </div>
-                                )}
-                                {customFields.fdm && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">FDM</h3>
-                                    <p className="mt-1">Yes</p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Job Specifications */}
-                          {(customFields.jobType || customFields.format || customFields.service || customFields.sortation || 
-                            customFields.mailType || customFields.presentation || customFields.itemWeight) && (
-                            <div className="pt-2 border-t">
-                              <h3 className="text-md font-medium pb-2">Job Specifications</h3>
-                              <div className="grid grid-cols-2 gap-4">
-                                {customFields.itemWeight > 0 && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Item Weight</h3>
-                                    <p className="mt-1">{customFields.itemWeight}g</p>
-                                  </div>
-                                )}
-                                {customFields.jobType && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Job Type</h3>
-                                    <p className="mt-1">{customFields.jobType}</p>
-                                  </div>
-                                )}
-                                {customFields.format && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Format</h3>
-                                    <p className="mt-1">{customFields.format}</p>
-                                  </div>
-                                )}
-                                {customFields.service && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Service</h3>
-                                    <p className="mt-1">{customFields.service}</p>
-                                  </div>
-                                )}
-                                {customFields.sortation && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Sortation</h3>
-                                    <p className="mt-1">{customFields.sortation}</p>
-                                  </div>
-                                )}
-                                {customFields.mailType && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Mail Type</h3>
-                                    <p className="mt-1">{customFields.mailType}</p>
-                                  </div>
-                                )}
-                                {customFields.presentation && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Presentation</h3>
-                                    <p className="mt-1">{customFields.presentation}</p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Bureau Services */}
-                          {(customFields.bureauService || customFields.dataType) && (
-                            <div className="pt-2 border-t">
-                              <h3 className="text-md font-medium pb-2">Bureau Services</h3>
-                              <div className="grid grid-cols-2 gap-4">
-                                {customFields.bureauService && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Label</h3>
-                                    <p className="mt-1">{customFields.bureauService}</p>
-                                  </div>
-                                )}
-                                {customFields.dataType && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Data</h3>
-                                    <p className="mt-1">{customFields.dataType}</p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Locations Information */}
-                          {(customFields.collectionAddress || customFields.handoverAddress) && (
-                            <div className="pt-2 border-t">
-                              <h3 className="text-md font-medium pb-2">Locations</h3>
-                              <div className="grid grid-cols-2 gap-4">
-                                {customFields.collectionAddress && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Collection Address</h3>
-                                    <p className="mt-1 flex items-start">
-                                      <MapPin className="h-4 w-4 mr-1 mt-1 text-jobBlue" />
-                                      <span className="whitespace-pre-line">{customFields.collectionAddress}</span>
-                                    </p>
-                                  </div>
-                                )}
-                                {customFields.handoverAddress && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Handover Address</h3>
-                                    <p className="mt-1 flex items-start">
-                                      <MapPin className="h-4 w-4 mr-1 mt-1 text-jobBlue" />
-                                      <span className="whitespace-pre-line">{customFields.handoverAddress}</span>
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Delivery Information */}
-                          {(customFields.deliveryInstructions || customFields.vehicleType) && (
-                            <div className="pt-2 border-t">
-                              <h3 className="text-md font-medium pb-2">Delivery Information</h3>
-                              <div className="grid grid-cols-2 gap-4">
-                                {customFields.vehicleType && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Vehicle Type</h3>
-                                    <p className="mt-1 flex items-center">
-                                      <Truck className="h-4 w-4 mr-1 text-jobBlue" />
-                                      {customFields.vehicleType}
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                              {customFields.deliveryInstructions && (
-                                <div className="mt-3">
-                                  <h3 className="text-sm font-medium text-gray-500">Delivery Instructions</h3>
-                                  <p className="mt-1 whitespace-pre-line">{customFields.deliveryInstructions}</p>
+                          <div className="pt-2 border-t">
+                            <h3 className="text-md font-medium pb-2">Additional Customer Information</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                              {customFields.customerName && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Customer Name</h3>
+                                  <p className="mt-1">{customFields.customerName}</p>
+                                </div>
+                              )}
+                              {customFields.mailingHouse && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Mailing House</h3>
+                                  <p className="mt-1">{customFields.mailingHouse}</p>
+                                </div>
+                              )}
+                              {customFields.jobName && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Job Name</h3>
+                                  <p className="mt-1">{customFields.jobName}</p>
+                                </div>
+                              )}
+                              {customFields.poNumber && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">PO Number</h3>
+                                  <p className="mt-1">{customFields.poNumber}</p>
+                                </div>
+                              )}
+                              {customFields.fdm && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">FDM</h3>
+                                  <p className="mt-1">Yes</p>
                                 </div>
                               )}
                             </div>
-                          )}
+                          </div>
                           
-                          {/* Consumables Required */}
-                          {customFields.consumablesRequired && (
-                            <div className="pt-2 border-t">
-                              <h3 className="text-md font-medium pb-2">Consumables</h3>
-                              <div className="grid grid-cols-2 gap-4">
-                                {customFields.productionStartDate && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Production Start</h3>
-                                    <p className="mt-1 flex items-center">
-                                      <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
-                                      {formatDate(customFields.productionStartDate)}
-                                    </p>
-                                  </div>
-                                )}
-                                {customFields.productionEndDate && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Production End</h3>
-                                    <p className="mt-1 flex items-center">
-                                      <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
-                                      {formatDate(customFields.productionEndDate)}
-                                    </p>
-                                  </div>
-                                )}
-                                {customFields.consumablesRequiredDate && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Required By</h3>
-                                    <p className="mt-1 flex items-center">
-                                      <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
-                                      {formatDate(customFields.consumablesRequiredDate)}
-                                    </p>
-                                  </div>
-                                )}
-                                {customFields.bagLabels && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Bag Labels</h3>
-                                    <p className="mt-1">{customFields.bagLabels}</p>
-                                  </div>
-                                )}
-                              </div>
-                              
-                              {(customFields.trays > 0 || customFields.magnums > 0 || 
-                                customFields.pallets > 0 || customFields.yorks > 0) && (
-                                <div className="mt-3">
-                                  <h3 className="text-sm font-medium text-gray-500">Quantities</h3>
-                                  <div className="grid grid-cols-4 gap-2 mt-1">
-                                    {customFields.trays > 0 && (
-                                      <div className="bg-gray-50 p-2 rounded text-center">
-                                        <p className="text-xs text-gray-500">Trays</p>
-                                        <p className="font-medium">{customFields.trays}</p>
-                                      </div>
-                                    )}
-                                    {customFields.magnums > 0 && (
-                                      <div className="bg-gray-50 p-2 rounded text-center">
-                                        <p className="text-xs text-gray-500">Magnums</p>
-                                        <p className="font-medium">{customFields.magnums}</p>
-                                      </div>
-                                    )}
-                                    {customFields.pallets > 0 && (
-                                      <div className="bg-gray-50 p-2 rounded text-center">
-                                        <p className="text-xs text-gray-500">Pallets</p>
-                                        <p className="font-medium">{customFields.pallets}</p>
-                                      </div>
-                                    )}
-                                    {customFields.yorks > 0 && (
-                                      <div className="bg-gray-50 p-2 rounded text-center">
-                                        <p className="text-xs text-gray-500">Yorks</p>
-                                        <p className="font-medium">{customFields.yorks}</p>
-                                      </div>
-                                    )}
-                                  </div>
+                          <div className="pt-2 border-t">
+                            <h3 className="text-md font-medium pb-2">Job Specifications</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                              {customFields.itemWeight > 0 && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Item Weight</h3>
+                                  <p className="mt-1">{customFields.itemWeight}g</p>
+                                </div>
+                              )}
+                              {customFields.jobType && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Job Type</h3>
+                                  <p className="mt-1">{customFields.jobType}</p>
+                                </div>
+                              )}
+                              {customFields.format && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Format</h3>
+                                  <p className="mt-1">{customFields.format}</p>
+                                </div>
+                              )}
+                              {customFields.service && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Service</h3>
+                                  <p className="mt-1">{customFields.service}</p>
+                                </div>
+                              )}
+                              {customFields.sortation && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Sortation</h3>
+                                  <p className="mt-1">{customFields.sortation}</p>
+                                </div>
+                              )}
+                              {customFields.mailType && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Mail Type</h3>
+                                  <p className="mt-1">{customFields.mailType}</p>
+                                </div>
+                              )}
+                              {customFields.presentation && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Presentation</h3>
+                                  <p className="mt-1">{customFields.presentation}</p>
                                 </div>
                               )}
                             </div>
-                          )}
+                          </div>
                           
-                          {/* Additional Information */}
-                          {customFields.additionalInfo && (
-                            <div className="pt-2 border-t">
-                              <h3 className="text-md font-medium pb-2">Additional Information</h3>
-                              <p className="mt-1 whitespace-pre-line">{customFields.additionalInfo}</p>
+                          <div className="pt-2 border-t">
+                            <h3 className="text-md font-medium pb-2">Bureau Services</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                              {customFields.bureauService && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Label</h3>
+                                  <p className="mt-1">{customFields.bureauService}</p>
+                                </div>
+                              )}
+                              {customFields.dataType && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Data</h3>
+                                  <p className="mt-1">{customFields.dataType}</p>
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </div>
+                          
+                          <div className="pt-2 border-t">
+                            <h3 className="text-md font-medium pb-2">Locations</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                              {customFields.collectionAddress && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Collection Address</h3>
+                                  <p className="mt-1 flex items-start">
+                                    <MapPin className="h-4 w-4 mr-1 mt-1 text-jobBlue" />
+                                    <span className="whitespace-pre-line">{customFields.collectionAddress}</span>
+                                  </p>
+                                </div>
+                              )}
+                              {customFields.handoverAddress && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Handover Address</h3>
+                                  <p className="mt-1 flex items-start">
+                                    <MapPin className="h-4 w-4 mr-1 mt-1 text-jobBlue" />
+                                    <span className="whitespace-pre-line">{customFields.handoverAddress}</span>
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="pt-2 border-t">
+                            <h3 className="text-md font-medium pb-2">Delivery Information</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                              {customFields.vehicleType && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Vehicle Type</h3>
+                                  <p className="mt-1 flex items-center">
+                                    <Truck className="h-4 w-4 mr-1 text-jobBlue" />
+                                    {customFields.vehicleType}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                            {customFields.deliveryInstructions && (
+                              <div className="mt-3">
+                                <h3 className="text-sm font-medium text-gray-500">Delivery Instructions</h3>
+                                <p className="mt-1 whitespace-pre-line">{customFields.deliveryInstructions}</p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="pt-2 border-t">
+                            <h3 className="text-md font-medium pb-2">Consumables</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                              {customFields.productionStartDate && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Production Start</h3>
+                                  <p className="mt-1 flex items-center">
+                                    <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                                    {formatDate(customFields.productionStartDate)}
+                                  </p>
+                                </div>
+                              )}
+                              {customFields.productionEndDate && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Production End</h3>
+                                  <p className="mt-1 flex items-center">
+                                    <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                                    {formatDate(customFields.productionEndDate)}
+                                  </p>
+                                </div>
+                              )}
+                              {customFields.consumablesRequiredDate && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Required By</h3>
+                                  <p className="mt-1 flex items-center">
+                                    <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                                    {formatDate(customFields.consumablesRequiredDate)}
+                                  </p>
+                                </div>
+                              )}
+                              {customFields.bagLabels && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-gray-500">Bag Labels</h3>
+                                  <p className="mt-1">{customFields.bagLabels}</p>
+                                </div>
+                              )}
+                            </div>
+                            {(customFields.trays > 0 || customFields.magnums > 0 || 
+                              customFields.pallets > 0 || customFields.yorks > 0) && (
+                              <div className="mt-3">
+                                <h3 className="text-sm font-medium text-gray-500">Quantities</h3>
+                                <div className="grid grid-cols-4 gap-2 mt-1">
+                                  {customFields.trays > 0 && (
+                                    <div className="bg-gray-50 p-2 rounded text-center">
+                                      <p className="text-xs text-gray-500">Trays</p>
+                                      <p className="font-medium">{customFields.trays}</p>
+                                    </div>
+                                  )}
+                                  {customFields.magnums > 0 && (
+                                    <div className="bg-gray-50 p-2 rounded text-center">
+                                      <p className="text-xs text-gray-500">Magnums</p>
+                                      <p className="font-medium">{customFields.magnums}</p>
+                                    </div>
+                                  )}
+                                  {customFields.pallets > 0 && (
+                                    <div className="bg-gray-50 p-2 rounded text-center">
+                                      <p className="text-xs text-gray-500">Pallets</p>
+                                      <p className="font-medium">{customFields.pallets}</p>
+                                    </div>
+                                  )}
+                                  {customFields.yorks > 0 && (
+                                    <div className="bg-gray-50 p-2 rounded text-center">
+                                      <p className="text-xs text-gray-500">Yorks</p>
+                                      <p className="font-medium">{customFields.yorks}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="pt-2 border-t">
+                            <h3 className="text-md font-medium pb-2">Additional Information</h3>
+                            <p className="mt-1 whitespace-pre-line">{customFields.additionalInfo}</p>
+                          </div>
                         </>
                       )}
                     </div>
                   </CardContent>
                 </Card>
                 
-                {/* Attachments Card */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Attachments</CardTitle>
@@ -562,7 +509,6 @@ const JobDetails = () => {
                 </Card>
               </div>
               
-              {/* Right Sidebar */}
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
