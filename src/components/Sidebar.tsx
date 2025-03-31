@@ -67,9 +67,10 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <div className="w-64 bg-jobGray-lighter border-r border-jobGray min-h-screen">
-      <div className="flex flex-col p-4">
-        <div className="py-6 px-4 text-center">
+    <div className="w-64 bg-jobGray-lighter border-r border-jobGray min-h-screen flex flex-col">
+      <div className="flex flex-col p-4 h-full">
+        {/* Logo and User Info */}
+        <div className="py-6 px-4 text-center border-b border-jobGray mb-4">
           <img 
             src="/lovable-uploads/9bd772b9-fc9d-467e-b936-39e8438d452d.png" 
             alt="Job Booking System Logo" 
@@ -86,20 +87,20 @@ const Sidebar: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-2 mb-4 flex flex-col space-y-2 px-2">
-          <Link to="/dashboard?form=job">
+        <div className="mb-6 flex flex-col space-y-2 px-2">
+          <Link to="/dashboard?form=job" className="w-full">
             <Button className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90">
               <PlusCircle className="h-4 w-4 mr-2" />
               <span>New Job</span>
             </Button>
           </Link>
-          <Link to="/dashboard?form=file">
+          <Link to="/dashboard?form=file" className="w-full">
             <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
               <FileUp className="h-4 w-4 mr-2" />
               <span>Book via File</span>
             </Button>
           </Link>
-          <Link to="/dashboard?form=ucid">
+          <Link to="/dashboard?form=ucid" className="w-full">
             <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
               <File className="h-4 w-4 mr-2" />
               <span>Request New UCID</span>
@@ -107,7 +108,8 @@ const Sidebar: React.FC = () => {
           </Link>
         </div>
 
-        <div className="space-y-1">
+        {/* Navigation Menu */}
+        <div className="space-y-1 flex-grow">
           {navItems
             .filter(item => item.allowed)
             .map(item => (
@@ -115,7 +117,7 @@ const Sidebar: React.FC = () => {
                 key={item.name}
                 to={item.path}
                 className={cn(
-                  "flex items-center px-4 py-3 text-sm rounded-md",
+                  "flex items-center px-4 py-3 text-sm rounded-md transition-colors",
                   location.pathname === item.path
                     ? "bg-jobRed text-white"
                     : "text-jobGray-dark hover:bg-gray-200 hover:text-jobRed"
@@ -127,13 +129,14 @@ const Sidebar: React.FC = () => {
             ))}
         </div>
 
-        <div className="mt-auto pt-6 border-t border-jobGray mt-6">
+        {/* Recent Activity */}
+        <div className="mt-auto pt-4 border-t border-jobGray mt-4">
           <div className="text-xs text-jobGray-dark">
-            <div className="flex items-center mb-2">
+            <div className="flex items-center mb-2 px-4">
               <Clock className="h-4 w-4 mr-1" />
               <span>Recent Activity</span>
             </div>
-            <ul className="space-y-2">
+            <ul className="space-y-2 px-4">
               <li className="flex items-start">
                 <Calendar className="h-3 w-3 mr-1 mt-1 text-jobGray" />
                 <span>New job created</span>
