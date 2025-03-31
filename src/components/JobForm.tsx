@@ -72,6 +72,7 @@ const JobForm: React.FC = () => {
 
   useEffect(() => {
     if (open) {
+      console.log("Dialog opened, user data:", user);
       if (user?.subClients && user.subClients.length > 0) {
         const clientMap = new Map();
         
@@ -85,7 +86,7 @@ const JobForm: React.FC = () => {
         });
         
         const clientList = Array.from(clientMap.values());
-        console.log("Available clients:", clientList);
+        console.log("Extracted clients:", clientList);
         setClients(clientList);
         
         const subClientList = user.subClients.map(sc => ({
@@ -94,8 +95,12 @@ const JobForm: React.FC = () => {
           clientId: sc.clientName,
           clientName: sc.clientName
         }));
-        console.log("Available subclients:", subClientList);
+        console.log("Formatted subclients:", subClientList);
         setSubClients(subClientList);
+      } else {
+        console.log("No subClients found for user");
+        setClients([]);
+        setSubClients([]);
       }
     }
   }, [open, user]);
