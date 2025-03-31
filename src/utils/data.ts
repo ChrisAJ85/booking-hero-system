@@ -17,6 +17,7 @@ export interface Job {
   subClientId?: string;
   subClientName?: string;
   clientName?: string;
+  emanifestId?: string;
 }
 
 export interface File {

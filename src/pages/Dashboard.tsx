@@ -30,7 +30,26 @@ const Dashboard = () => {
   
   useEffect(() => {
     // Load jobs from the store
-    setJobs(JobStore.getJobs());
+    const loadedJobs = JobStore.getJobs();
+    
+    // Add emanifestId to existing jobs if they don't have one
+    const updatedJobs = loadedJobs.map(job => {
+      // Jobs 1, 2, and 5 will have an emanifestId for demo purposes
+      if (job.id === '1' && !job.emanifestId) {
+        return { ...job, emanifestId: 'EM-123456' };
+      }
+      if (job.id === '2' && !job.emanifestId) {
+        return { ...job, emanifestId: 'EM-234567' };
+      }
+      if (job.id === '5' && !job.emanifestId) {
+        return { ...job, emanifestId: 'EM-567890' };
+      }
+      return job;
+    });
+    
+    // Save the updated jobs back to the store
+    JobStore.saveJobs(updatedJobs);
+    setJobs(updatedJobs);
   }, []);
   
   const filteredJobs = () => {
