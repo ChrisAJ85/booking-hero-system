@@ -1,8 +1,9 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush } from 'lucide-react';
+import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush, PlusCircle, FileUp, File } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/utils/auth';
+import { Button } from '@/components/ui/button';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
@@ -69,6 +70,11 @@ const Sidebar: React.FC = () => {
     <div className="w-64 bg-jobGray-lighter border-r border-jobGray min-h-screen">
       <div className="flex flex-col p-4">
         <div className="py-6 px-4 text-center">
+          <img 
+            src="/lovable-uploads/9bd772b9-fc9d-467e-b936-39e8438d452d.png" 
+            alt="Job Booking System Logo" 
+            className="h-8 mx-auto mb-2"
+          />
           <h2 className="text-xl font-bold text-jobRed">Job System</h2>
           <div className="mt-2 text-sm text-jobGray-dark">
             <div className="flex items-center justify-center">
@@ -77,6 +83,22 @@ const Sidebar: React.FC = () => {
             </div>
             <div className="capitalize mt-1">{user?.role}</div>
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="mt-2 mb-4 flex flex-col space-y-2 px-2">
+          <Button className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            <span>New Job</span>
+          </Button>
+          <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
+            <FileUp className="h-4 w-4 mr-2" />
+            <span>Book via File</span>
+          </Button>
+          <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
+            <File className="h-4 w-4 mr-2" />
+            <span>Request New UCID</span>
+          </Button>
         </div>
 
         <div className="space-y-1">
