@@ -144,7 +144,7 @@ const Dashboard = () => {
               <DialogHeader>
                 <DialogTitle>New Job</DialogTitle>
               </DialogHeader>
-              <JobForm onClose={handleCloseForm} />
+              <JobForm />
             </DialogContent>
           </Dialog>
         );
@@ -155,7 +155,7 @@ const Dashboard = () => {
               <DialogHeader>
                 <DialogTitle>Book via File</DialogTitle>
               </DialogHeader>
-              <FileUploadJobForm onClose={handleCloseForm} />
+              <FileUploadJobForm />
             </DialogContent>
           </Dialog>
         );
@@ -166,7 +166,7 @@ const Dashboard = () => {
               <DialogHeader>
                 <DialogTitle>Request New UCID</DialogTitle>
               </DialogHeader>
-              <UCIDRequestForm onClose={handleCloseForm} />
+              <UCIDRequestForm />
             </DialogContent>
           </Dialog>
         );
