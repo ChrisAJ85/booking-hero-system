@@ -1,8 +1,18 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush } from 'lucide-react';
+import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/utils/auth';
+import JobForm from './JobForm';
+import { Button } from './ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
@@ -78,6 +88,24 @@ const Sidebar: React.FC = () => {
             <div className="capitalize mt-1">{user?.role}</div>
           </div>
         </div>
+
+        {/* Add New Job Button */}
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="w-full mb-4 bg-jobRed hover:bg-red-700 text-white">
+              <Plus className="h-4 w-4 mr-2" /> New Job
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Create New Job</DialogTitle>
+              <DialogDescription>
+                Fill in the details to create a new job.
+              </DialogDescription>
+            </DialogHeader>
+            <JobForm />
+          </DialogContent>
+        </Dialog>
 
         <div className="space-y-1">
           {navItems

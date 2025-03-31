@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
-import JobForm from '@/components/JobForm';
 import FileUploadJobForm from '@/components/FileUploadJobForm';
 import UCIDRequestForm from '@/components/UCIDRequestForm';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Job, JobStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
 import { Calendar, Clock, Eye, File, Users, AlertTriangle, ExternalLink } from 'lucide-react';
@@ -119,7 +117,6 @@ const Dashboard = () => {
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
               <div className="space-x-2">
-                <JobForm />
                 <FileUploadJobForm />
                 <UCIDRequestForm />
               </div>
@@ -210,7 +207,6 @@ const Dashboard = () => {
                   {jobs.length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No jobs found</p>
-                      <JobForm />
                     </div>
                   ) : (
                     <Table>
@@ -276,7 +272,6 @@ const Dashboard = () => {
                   {filteredJobs().length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No pending jobs</p>
-                      <JobForm />
                     </div>
                   ) : (
                     <Table>
@@ -342,7 +337,6 @@ const Dashboard = () => {
                   {filteredJobs().length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No in-progress jobs</p>
-                      <JobForm />
                     </div>
                   ) : (
                     <Table>
@@ -408,7 +402,6 @@ const Dashboard = () => {
                   {filteredJobs().length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No completed jobs</p>
-                      <JobForm />
                     </div>
                   ) : (
                     <Table>
@@ -474,7 +467,6 @@ const Dashboard = () => {
                   {filteredJobs().length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No cancelled jobs</p>
-                      <JobForm />
                     </div>
                   ) : (
                     <Table>
