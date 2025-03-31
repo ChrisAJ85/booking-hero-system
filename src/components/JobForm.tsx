@@ -73,7 +73,39 @@ const JobForm: React.FC = () => {
   useEffect(() => {
     if (open) {
       console.log("Dialog opened, user data:", user);
-      if (user?.subClients && user.subClients.length > 0) {
+      
+      if (!user?.subClients || user.subClients.length === 0) {
+        console.log("No subClients found for user, adding default options");
+        
+        const defaultClients = [
+          { id: 'default-client-1', name: 'Sample Client' },
+          { id: 'default-client-2', name: 'Test Client' }
+        ];
+        
+        const defaultSubClients = [
+          { 
+            id: 'default-subclient-1', 
+            name: 'Sample Subclient 1', 
+            clientId: 'default-client-1',
+            clientName: 'Sample Client'
+          },
+          { 
+            id: 'default-subclient-2', 
+            name: 'Sample Subclient 2', 
+            clientId: 'default-client-1',
+            clientName: 'Sample Client'
+          },
+          { 
+            id: 'default-subclient-3', 
+            name: 'Test Subclient', 
+            clientId: 'default-client-2',
+            clientName: 'Test Client'
+          }
+        ];
+        
+        setClients(defaultClients);
+        setSubClients(defaultSubClients);
+      } else {
         const clientMap = new Map();
         
         user.subClients.forEach(sc => {
@@ -97,10 +129,6 @@ const JobForm: React.FC = () => {
         }));
         console.log("Formatted subclients:", subClientList);
         setSubClients(subClientList);
-      } else {
-        console.log("No subClients found for user");
-        setClients([]);
-        setSubClients([]);
       }
     }
   }, [open, user]);
@@ -335,15 +363,19 @@ const JobForm: React.FC = () => {
                   value={formData.clientId} 
                   onValueChange={(value) => handleSelectChange('clientId', value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="clientId">
                     <SelectValue placeholder="Select a customer" />
                   </SelectTrigger>
                   <SelectContent>
-                    {clients.map(client => (
-                      <SelectItem key={client.id} value={client.id}>
-                        {client.name}
-                      </SelectItem>
-                    ))}
+                    {clients.length === 0 ? (
+                      <SelectItem value="no-clients">No customers available</SelectItem>
+                    ) : (
+                      clients.map(client => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -353,17 +385,21 @@ const JobForm: React.FC = () => {
                 <Select 
                   value={formData.subClientId} 
                   onValueChange={(value) => handleSelectChange('subClientId', value)}
-                  disabled={!formData.clientId}
+                  disabled={!formData.clientId || formData.clientId === 'no-clients'}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="subClientId">
                     <SelectValue placeholder="Select a subclient" />
                   </SelectTrigger>
                   <SelectContent>
-                    {filteredSubClients.map(subclient => (
-                      <SelectItem key={subclient.id} value={subclient.id}>
-                        {subclient.name}
-                      </SelectItem>
-                    ))}
+                    {filteredSubClients.length === 0 ? (
+                      <SelectItem value="no-subclients">No subclients available</SelectItem>
+                    ) : (
+                      filteredSubClients.map(subclient => (
+                        <SelectItem key={subclient.id} value={subclient.id}>
+                          {subclient.name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
