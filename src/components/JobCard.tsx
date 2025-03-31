@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building, Calendar, Clock, ExternalLink, FileUp, Paperclip, Users } from 'lucide-react';
+import { Building, Calendar, Clock, ExternalLink, FileUp, MapPin, Paperclip, Truck, Users } from 'lucide-react';
 import { Job } from '@/utils/data';
 import { format } from 'date-fns';
 
@@ -51,6 +51,31 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
     }
   };
 
+  // Extract custom fields if available
+  const getCustomFields = () => {
+    try {
+      if (job.description && job.description.includes('{')) {
+        const parts = job.description.split('\n\n');
+        if (parts.length > 1) {
+          const jsonStr = parts[parts.length - 1];
+          return JSON.parse(jsonStr);
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  };
+  
+  const customFields = getCustomFields();
+  
+  // Get clean description without the JSON part
+  const getCleanDescription = () => {
+    if (!job.description) return '';
+    const parts = job.description.split('\n\n');
+    return parts.length > 1 ? parts[0] : job.description;
+  };
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
@@ -72,16 +97,21 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
       </CardHeader>
       <CardContent className="pb-2">
         <p className="text-sm line-clamp-2 text-gray-600 mb-4">
-          {job.description ? job.description.split('\n\n')[0] : ''}
+          {getCleanDescription()}
         </p>
         
-        {job.subClientName && (
-          <div className="mb-3 flex items-center text-sm text-jobGray">
-            <Building className="h-3.5 w-3.5 mr-1" />
-            <span>
-              {job.subClientName} 
-              {job.clientName && <span className="text-xs text-gray-500 ml-1">({job.clientName})</span>}
-            </span>
+        <div className="mb-3 flex items-center text-sm text-jobGray">
+          <Building className="h-3.5 w-3.5 mr-1" />
+          <span>
+            {job.subClientName || 'No client specified'} 
+            {job.clientName && <span className="text-xs text-gray-500 ml-1">({job.clientName})</span>}
+          </span>
+        </div>
+        
+        {customFields && customFields.collectionAddress && (
+          <div className="mb-2 flex items-start text-xs text-gray-600">
+            <MapPin className="h-3 w-3 mr-1 mt-0.5 text-jobGray" />
+            <span className="line-clamp-1">Collection: {customFields.collectionAddress.split('\n')[0]}</span>
           </div>
         )}
         

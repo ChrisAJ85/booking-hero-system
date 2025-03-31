@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Download, FileText, Paperclip, User, Users } from 'lucide-react';
+import { Calendar, Clock, Download, FileText, MapPin, Building, Package, Paperclip, Truck, User, Users } from 'lucide-react';
 import { Job, JobStore, getJobById } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
 import { format } from 'date-fns';
@@ -133,7 +134,7 @@ const JobDetails = () => {
   };
 
   const getCleanDescription = () => {
-    if (!job.description) return '';
+    if (!job?.description) return '';
     const parts = job.description.split('\n\n');
     return parts.length > 1 ? parts[0] : job.description;
   };
@@ -143,17 +144,17 @@ const JobDetails = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Navbar />
-        <div className="flex-1 bg-jobGray-light p-6">
+        <div className="flex-1 bg-jobGray-light p-6 overflow-auto">
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold text-gray-800">{job.title}</h1>
-                  <Badge className={getStatusColor(job.status)}>
-                    {job.status.replace('_', ' ').toUpperCase()}
+                  <h1 className="text-2xl font-bold text-gray-800">{job?.title}</h1>
+                  <Badge className={getStatusColor(job?.status || 'pending')}>
+                    {job?.status?.replace('_', ' ').toUpperCase()}
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-500">Reference: {job.reference}</p>
+                <p className="text-sm text-gray-500">Reference: {job?.reference}</p>
               </div>
               
               <div className="flex gap-2">
@@ -161,7 +162,7 @@ const JobDetails = () => {
                   Back to Dashboard
                 </Button>
                 {hasPermission('manager') && (
-                  <Select defaultValue={job.status} onValueChange={handleStatusChange}>
+                  <Select defaultValue={job?.status} onValueChange={handleStatusChange}>
                     <SelectTrigger className="w-40">
                       <SelectValue placeholder="Change Status" />
                     </SelectTrigger>
@@ -178,61 +179,98 @@ const JobDetails = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2 space-y-6">
+                {/* Main job details card */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Job Details</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
+                      {/* Basic job information */}
                       <div>
                         <h3 className="text-sm font-medium text-gray-500">Description</h3>
                         <p className="mt-1">{getCleanDescription()}</p>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Collection Date</h3>
-                          <p className="mt-1 flex items-center">
-                            <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
-                            {formatDate(job.collectionDate)}
-                          </p>
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Handover Date</h3>
-                          <p className="mt-1 flex items-center">
-                            <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
-                            {formatDate(job.handoverDate)}
-                          </p>
+                      {/* Client information section */}
+                      <div className="pt-2 border-t">
+                        <h3 className="text-md font-medium pb-2">Client Information</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          {job?.clientName && (
+                            <div>
+                              <h3 className="text-sm font-medium text-gray-500">Client</h3>
+                              <p className="mt-1 flex items-center">
+                                <Building className="h-4 w-4 mr-1 text-jobBlue" />
+                                {job.clientName}
+                              </p>
+                            </div>
+                          )}
+                          {job?.subClientName && (
+                            <div>
+                              <h3 className="text-sm font-medium text-gray-500">Sub-Client</h3>
+                              <p className="mt-1 flex items-center">
+                                <Building className="h-4 w-4 mr-1 text-jobBlue" />
+                                {job.subClientName}
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Item Count</h3>
-                          <p className="mt-1">{job.itemCount}</p>
+                      {/* Schedule section */}
+                      <div className="pt-2 border-t">
+                        <h3 className="text-md font-medium pb-2">Schedule</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-500">Collection Date</h3>
+                            <p className="mt-1 flex items-center">
+                              <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                              {formatDate(job?.collectionDate || '')}
+                            </p>
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-500">Handover Date</h3>
+                            <p className="mt-1 flex items-center">
+                              <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                              {formatDate(job?.handoverDate || '')}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="text-sm font-medium text-gray-500">Bag Count</h3>
-                          <p className="mt-1">{job.bagCount}</p>
+                      </div>
+                      
+                      {/* Item details section */}
+                      <div className="pt-2 border-t">
+                        <h3 className="text-md font-medium pb-2">Item Details</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-500">Item Count</h3>
+                            <p className="mt-1 flex items-center">
+                              <Package className="h-4 w-4 mr-1 text-jobBlue" />
+                              {job?.itemCount || 0}
+                            </p>
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-500">Bag Count</h3>
+                            <p className="mt-1 flex items-center">
+                              <Package className="h-4 w-4 mr-1 text-jobBlue" />
+                              {job?.bagCount || 0}
+                            </p>
+                          </div>
                         </div>
                       </div>
 
+                      {/* Custom Fields Section */}
                       {customFields && (
                         <>
+                          {/* Customer Information */}
                           {(customFields.customerName || customFields.subClientName || customFields.mailingHouse || customFields.jobName || customFields.poNumber) && (
-                            <div className="pt-2">
-                              <h3 className="text-md font-medium border-b pb-1 mb-2">Customer Information</h3>
+                            <div className="pt-2 border-t">
+                              <h3 className="text-md font-medium pb-2">Additional Customer Information</h3>
                               <div className="grid grid-cols-2 gap-4">
                                 {customFields.customerName && (
                                   <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Customer</h3>
+                                    <h3 className="text-sm font-medium text-gray-500">Customer Name</h3>
                                     <p className="mt-1">{customFields.customerName}</p>
-                                  </div>
-                                )}
-                                {customFields.subClientName && (
-                                  <div>
-                                    <h3 className="text-sm font-medium text-gray-500">Subclient</h3>
-                                    <p className="mt-1">{customFields.subClientName}</p>
                                   </div>
                                 )}
                                 {customFields.mailingHouse && (
@@ -263,10 +301,11 @@ const JobDetails = () => {
                             </div>
                           )}
                           
+                          {/* Job Specifications */}
                           {(customFields.jobType || customFields.format || customFields.service || customFields.sortation || 
                             customFields.mailType || customFields.presentation || customFields.itemWeight) && (
-                            <div className="pt-2">
-                              <h3 className="text-md font-medium border-b pb-1 mb-2">Job Specifications</h3>
+                            <div className="pt-2 border-t">
+                              <h3 className="text-md font-medium pb-2">Job Specifications</h3>
                               <div className="grid grid-cols-2 gap-4">
                                 {customFields.itemWeight > 0 && (
                                   <div>
@@ -314,9 +353,10 @@ const JobDetails = () => {
                             </div>
                           )}
                           
+                          {/* Bureau Services */}
                           {(customFields.bureauService || customFields.dataType) && (
-                            <div className="pt-2">
-                              <h3 className="text-md font-medium border-b pb-1 mb-2">Bureau Services</h3>
+                            <div className="pt-2 border-t">
+                              <h3 className="text-md font-medium pb-2">Bureau Services</h3>
                               <div className="grid grid-cols-2 gap-4">
                                 {customFields.bureauService && (
                                   <div>
@@ -334,9 +374,61 @@ const JobDetails = () => {
                             </div>
                           )}
                           
+                          {/* Locations Information */}
+                          {(customFields.collectionAddress || customFields.handoverAddress) && (
+                            <div className="pt-2 border-t">
+                              <h3 className="text-md font-medium pb-2">Locations</h3>
+                              <div className="grid grid-cols-2 gap-4">
+                                {customFields.collectionAddress && (
+                                  <div>
+                                    <h3 className="text-sm font-medium text-gray-500">Collection Address</h3>
+                                    <p className="mt-1 flex items-start">
+                                      <MapPin className="h-4 w-4 mr-1 mt-1 text-jobBlue" />
+                                      <span className="whitespace-pre-line">{customFields.collectionAddress}</span>
+                                    </p>
+                                  </div>
+                                )}
+                                {customFields.handoverAddress && (
+                                  <div>
+                                    <h3 className="text-sm font-medium text-gray-500">Handover Address</h3>
+                                    <p className="mt-1 flex items-start">
+                                      <MapPin className="h-4 w-4 mr-1 mt-1 text-jobBlue" />
+                                      <span className="whitespace-pre-line">{customFields.handoverAddress}</span>
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Delivery Information */}
+                          {(customFields.deliveryInstructions || customFields.vehicleType) && (
+                            <div className="pt-2 border-t">
+                              <h3 className="text-md font-medium pb-2">Delivery Information</h3>
+                              <div className="grid grid-cols-2 gap-4">
+                                {customFields.vehicleType && (
+                                  <div>
+                                    <h3 className="text-sm font-medium text-gray-500">Vehicle Type</h3>
+                                    <p className="mt-1 flex items-center">
+                                      <Truck className="h-4 w-4 mr-1 text-jobBlue" />
+                                      {customFields.vehicleType}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                              {customFields.deliveryInstructions && (
+                                <div className="mt-3">
+                                  <h3 className="text-sm font-medium text-gray-500">Delivery Instructions</h3>
+                                  <p className="mt-1 whitespace-pre-line">{customFields.deliveryInstructions}</p>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Consumables Required */}
                           {customFields.consumablesRequired && (
-                            <div className="pt-2">
-                              <h3 className="text-md font-medium border-b pb-1 mb-2">Consumables</h3>
+                            <div className="pt-2 border-t">
+                              <h3 className="text-md font-medium pb-2">Consumables</h3>
                               <div className="grid grid-cols-2 gap-4">
                                 {customFields.productionStartDate && (
                                   <div>
@@ -375,7 +467,7 @@ const JobDetails = () => {
                               
                               {(customFields.trays > 0 || customFields.magnums > 0 || 
                                 customFields.pallets > 0 || customFields.yorks > 0) && (
-                                <div className="mt-2">
+                                <div className="mt-3">
                                   <h3 className="text-sm font-medium text-gray-500">Quantities</h3>
                                   <div className="grid grid-cols-4 gap-2 mt-1">
                                     {customFields.trays > 0 && (
@@ -408,9 +500,10 @@ const JobDetails = () => {
                             </div>
                           )}
                           
+                          {/* Additional Information */}
                           {customFields.additionalInfo && (
-                            <div className="pt-2">
-                              <h3 className="text-md font-medium border-b pb-1 mb-2">Additional Information</h3>
+                            <div className="pt-2 border-t">
+                              <h3 className="text-md font-medium pb-2">Additional Information</h3>
                               <p className="mt-1 whitespace-pre-line">{customFields.additionalInfo}</p>
                             </div>
                           )}
@@ -420,19 +513,20 @@ const JobDetails = () => {
                   </CardContent>
                 </Card>
                 
+                {/* Attachments Card */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Attachments</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {job.files && job.files.length === 0 ? (
+                    {job?.files && job.files.length === 0 ? (
                       <div className="text-center py-8 text-gray-500">
                         <Paperclip className="h-8 w-8 mx-auto mb-2 opacity-50" />
                         <p>No attachments available</p>
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {job.files && job.files.map((file) => (
+                        {job?.files && job.files.map((file) => (
                           <div 
                             key={file.id} 
                             className="flex justify-between items-center p-3 bg-gray-50 rounded-md"
@@ -468,6 +562,7 @@ const JobDetails = () => {
                 </Card>
               </div>
               
+              {/* Right Sidebar */}
               <div className="space-y-6">
                 <Card>
                   <CardHeader>
@@ -478,7 +573,7 @@ const JobDetails = () => {
                       <h3 className="text-sm font-medium text-gray-500">Created By</h3>
                       <p className="mt-1 flex items-center">
                         <User className="h-4 w-4 mr-1 text-jobBlue" />
-                        {job.createdBy}
+                        {job?.createdBy}
                       </p>
                     </div>
                     
@@ -486,7 +581,7 @@ const JobDetails = () => {
                       <h3 className="text-sm font-medium text-gray-500">Created Date</h3>
                       <p className="mt-1 flex items-center">
                         <Clock className="h-4 w-4 mr-1 text-jobBlue" />
-                        {formatDate(job.createdAt)}
+                        {formatDate(job?.createdAt || '')}
                       </p>
                     </div>
                     
@@ -494,9 +589,19 @@ const JobDetails = () => {
                       <h3 className="text-sm font-medium text-gray-500">Assigned To</h3>
                       <p className="mt-1 flex items-center">
                         <Users className="h-4 w-4 mr-1 text-jobBlue" />
-                        {job.assignedTo || 'Not assigned'}
+                        {job?.assignedTo || 'Not assigned'}
                       </p>
                     </div>
+                    
+                    {job?.emanifestId && (
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">E-Manifest ID</h3>
+                        <p className="mt-1 flex items-center">
+                          <FileText className="h-4 w-4 mr-1 text-jobBlue" />
+                          {job.emanifestId}
+                        </p>
+                      </div>
+                    )}
                     
                     {statusChanged && (
                       <div className="bg-green-50 p-3 rounded-md text-sm text-green-800">
