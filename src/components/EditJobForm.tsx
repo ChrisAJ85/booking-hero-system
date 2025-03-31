@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Job, JobStore } from '@/utils/data';
 import { Button } from '@/components/ui/button';
@@ -41,7 +40,6 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
     job.handoverDate ? new Date(job.handoverDate) : undefined
   );
 
-  // Extract custom fields if available
   const getCustomFields = () => {
     try {
       if (job.description && job.description.includes('{')) {
@@ -95,7 +93,6 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Preserve custom fields if they exist
     let finalDescription = values.description || '';
     
     const updatedJob: Job = {
@@ -106,7 +103,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
       itemCount: values.itemCount || 0,
       bagCount: values.bagCount || 0,
       status: values.status,
-      notes: values.notes || '',
+      notes: values.notes,
       collectionDate: collectionDate?.toISOString() || job.collectionDate,
       handoverDate: handoverDate?.toISOString() || job.handoverDate,
       subClientName: values.subClientName || undefined,
