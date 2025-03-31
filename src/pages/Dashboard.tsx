@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Job, JobStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
-import { Calendar, Clock, File, Users, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Calendar, Clock, File, Users, AlertTriangle, ExternalLink, Eye } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { toast } from '@/hooks/use-toast';
 
 const Dashboard = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -80,6 +81,21 @@ const Dashboard = () => {
         return <Badge className="bg-red-100 text-red-800 border-red-300">CANCELLED</Badge>;
       default:
         return <Badge className="bg-gray-100 text-gray-800 border-gray-300">{status.toUpperCase()}</Badge>;
+    }
+  };
+
+  const handleShowEmanifest = (job: Job) => {
+    if (job.emanifestId) {
+      toast({
+        title: "eManifest Details",
+        description: `eManifest ID: ${job.emanifestId} for job: ${job.title}`,
+      });
+    } else {
+      toast({
+        title: "Missing eManifest",
+        description: "This job does not have an eManifest ID assigned.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -202,15 +218,26 @@ const Dashboard = () => {
                               }
                             </TableCell>
                             <TableCell>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => navigate(`/jobs/${job.id}`)}
-                                className="flex items-center gap-1 p-1 h-auto"
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                                <span>View</span>
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -257,15 +284,26 @@ const Dashboard = () => {
                               }
                             </TableCell>
                             <TableCell>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => navigate(`/jobs/${job.id}`)}
-                                className="flex items-center gap-1 p-1 h-auto"
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                                <span>View</span>
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -312,15 +350,26 @@ const Dashboard = () => {
                               }
                             </TableCell>
                             <TableCell>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => navigate(`/jobs/${job.id}`)}
-                                className="flex items-center gap-1 p-1 h-auto"
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                                <span>View</span>
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -367,15 +416,26 @@ const Dashboard = () => {
                               }
                             </TableCell>
                             <TableCell>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => navigate(`/jobs/${job.id}`)}
-                                className="flex items-center gap-1 p-1 h-auto"
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                                <span>View</span>
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -422,15 +482,26 @@ const Dashboard = () => {
                               }
                             </TableCell>
                             <TableCell>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => navigate(`/jobs/${job.id}`)}
-                                className="flex items-center gap-1 p-1 h-auto"
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                                <span>View</span>
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
