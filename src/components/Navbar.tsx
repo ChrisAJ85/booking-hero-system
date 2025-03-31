@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="text-white border-white hover:bg-jobGray-light"
+            className="text-jobGray-dark border-jobGray-light hover:bg-jobGray-light"
             onClick={logout}
           >
             Logout
