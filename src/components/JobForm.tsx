@@ -16,7 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Package, PackageCheck, Truck, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { JobStore, ClientStore, Client, Job } from '@/utils/data';
 import { toast } from '@/hooks/use-toast';
@@ -29,11 +29,17 @@ type JobFormProps = {
 const JobForm = ({ onSuccess }: JobFormProps) => {
   const [title, setTitle] = useState('');
   const [reference, setReference] = useState('');
+  const [description, setDescription] = useState('');
   const [clientName, setClientName] = useState('');
   const [subClientName, setSubClientName] = useState('');
   const [collectionDate, setCollectionDate] = useState<Date | undefined>();
+  const [handoverDate, setHandoverDate] = useState<Date | undefined>();
   const [status, setStatus] = useState<Job['status']>('pending');
   const [notes, setNotes] = useState('');
+  const [itemCount, setItemCount] = useState(0);
+  const [bagCount, setBagCount] = useState(0);
+  const [emanifestId, setEmanifestId] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
   const [isSubClient, setIsSubClient] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
   const [subClients, setSubClients] = useState<string[]>([]);
@@ -84,18 +90,20 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
       id: jobId,
       title,
       reference,
+      description,
       clientName,
       subClientName: isSubClient ? subClientName : '',
-      description: "",
       collectionDate: collectionDate.toISOString(),
-      handoverDate: collectionDate.toISOString(),
+      handoverDate: handoverDate ? handoverDate.toISOString() : collectionDate.toISOString(),
       status,
       notes,
-      itemCount: 0,
-      bagCount: 0,
+      itemCount: Number(itemCount),
+      bagCount: Number(bagCount),
       files: [],
       createdBy: user?.name || 'Unknown',
       createdAt: new Date().toISOString(),
+      emanifestId: emanifestId || undefined,
+      assignedTo: assignedTo || undefined,
     };
 
     JobStore.addJob(newJob);
@@ -125,11 +133,11 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Grid layout for better space usage */}
+    <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto p-2">
+      {/* Main Job Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="title">Job Title</Label>
+          <Label htmlFor="title">Job Title*</Label>
           <Input
             type="text"
             id="title"
@@ -141,7 +149,7 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
         </div>
         
         <div>
-          <Label htmlFor="reference">Reference</Label>
+          <Label htmlFor="reference">Reference*</Label>
           <Input
             type="text"
             id="reference"
@@ -153,9 +161,21 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
         </div>
       </div>
       
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <Textarea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Enter job description"
+          className="h-16"
+        />
+      </div>
+      
+      {/* Client Information */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="clientName">Client Name</Label>
+          <Label htmlFor="clientName">Client Name*</Label>
           <Select onValueChange={handleClientChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a client" />
@@ -202,9 +222,10 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
         </div>
       </div>
       
+      {/* Dates */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label>Collection Date</Label>
+          <Label>Collection Date*</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -234,7 +255,40 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
         </div>
         
         <div>
-          <Label htmlFor="status">Status</Label>
+          <Label>Handover Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !handoverDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {handoverDate ? (
+                  format(handoverDate, "PPP")
+                ) : (
+                  <span>Same as collection date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={handoverDate}
+                onSelect={setHandoverDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+      
+      {/* Status and Assignment */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="status">Status*</Label>
           <Select value={status} onValueChange={(value: Job['status']) => setStatus(value)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a status" />
@@ -247,19 +301,76 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
             </SelectContent>
           </Select>
         </div>
+        
+        <div>
+          <Label htmlFor="assignedTo">Assigned To</Label>
+          <Input
+            type="text"
+            id="assignedTo"
+            value={assignedTo}
+            onChange={(e) => setAssignedTo(e.target.value)}
+            placeholder="Enter assignee name"
+          />
+        </div>
       </div>
       
+      {/* Item Details */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <Label htmlFor="itemCount" className="flex items-center">
+            <Package className="h-4 w-4 mr-1" /> Item Count
+          </Label>
+          <Input
+            type="number"
+            id="itemCount"
+            value={itemCount}
+            onChange={(e) => setItemCount(parseInt(e.target.value) || 0)}
+            min="0"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="bagCount" className="flex items-center">
+            <PackageCheck className="h-4 w-4 mr-1" /> Bag Count
+          </Label>
+          <Input
+            type="number"
+            id="bagCount"
+            value={bagCount}
+            onChange={(e) => setBagCount(parseInt(e.target.value) || 0)}
+            min="0"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="emanifestId" className="flex items-center">
+            <FileText className="h-4 w-4 mr-1" /> E-Manifest ID
+          </Label>
+          <Input
+            type="text"
+            id="emanifestId"
+            value={emanifestId}
+            onChange={(e) => setEmanifestId(e.target.value)}
+            placeholder="Enter e-manifest ID"
+          />
+        </div>
+      </div>
+      
+      {/* Notes */}
       <div>
-        <Label htmlFor="notes">Notes</Label>
+        <Label htmlFor="notes" className="flex items-center">
+          <FileText className="h-4 w-4 mr-1" /> Notes
+        </Label>
         <Textarea
           id="notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Enter notes"
-          className="h-20" // Reduce height
+          className="h-16"
         />
       </div>
       
+      {/* Submit Buttons */}
       <div className="flex justify-end space-x-2 pt-2">
         <Button 
           type="button" 
