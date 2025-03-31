@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
@@ -107,7 +106,6 @@ const ClientManagement = () => {
     setSubClientFormData({
       name: ''
     });
-    setEditingSubClient({ subClient: null, clientId: '' });
   };
 
   const handleAddClient = () => {
@@ -126,13 +124,21 @@ const ClientManagement = () => {
 
   const handleAddSubClient = (clientId: string) => {
     console.log("Adding sub-client for client ID:", clientId);
-    setEditingSubClient({ subClient: null, clientId });
-    resetSubClientForm();
+    setEditingSubClient({ 
+      subClient: null, 
+      clientId: clientId 
+    });
+    setSubClientFormData({
+      name: ''
+    });
     setSubClientDialogOpen(true);
   };
 
   const handleEditSubClient = (clientId: string, subClient: SubClient) => {
-    setEditingSubClient({ subClient, clientId });
+    setEditingSubClient({ 
+      subClient, 
+      clientId: clientId 
+    });
     setSubClientFormData({
       name: subClient.name
     });
@@ -212,7 +218,6 @@ const ClientManagement = () => {
     }
     
     if (editingSubClient.subClient) {
-      // Updating existing sub-client
       const updatedSubClient = {
         ...editingSubClient.subClient,
         name: subClientFormData.name
@@ -248,8 +253,7 @@ const ClientManagement = () => {
         });
       }
     } else {
-      // Adding new sub-client
-      console.log("Creating new sub-client with name:", subClientFormData.name);
+      console.log("Creating new sub-client with name:", subClientFormData.name, "for client ID:", clientId);
       const newSubClient = ClientStore.addSubClient(clientId, {
         name: subClientFormData.name
       });
@@ -291,7 +295,7 @@ const ClientManagement = () => {
     }
     
     setSubClientDialogOpen(false);
-    resetSubClientForm();
+    setSubClientFormData({ name: '' });
   };
 
   const handleDeleteClient = (clientId: string) => {
@@ -393,7 +397,12 @@ const ClientManagement = () => {
                 </DialogContent>
               </Dialog>
               
-              <Dialog open={subClientDialogOpen} onOpenChange={setSubClientDialogOpen}>
+              <Dialog 
+                open={subClientDialogOpen} 
+                onOpenChange={(open) => {
+                  setSubClientDialogOpen(open);
+                }}
+              >
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
                     <DialogTitle>
@@ -418,7 +427,11 @@ const ClientManagement = () => {
                     </div>
                     
                     <div className="flex justify-end space-x-2 pt-4">
-                      <Button type="button" variant="outline" onClick={() => setSubClientDialogOpen(false)}>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setSubClientDialogOpen(false)}
+                      >
                         Cancel
                       </Button>
                       <Button type="submit" className="bg-jobBlue hover:bg-jobBlue-light">
