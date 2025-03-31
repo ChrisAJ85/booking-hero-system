@@ -4,9 +4,11 @@ import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Use
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
 
   const navItems = [
@@ -66,6 +68,14 @@ const Sidebar: React.FC = () => {
     }
   ];
 
+  const handleFormNavigation = (formType: string) => {
+    // Using navigate with query parameters - this won't cause a full page reload
+    navigate({
+      pathname: '/dashboard',
+      search: `?form=${formType}`
+    });
+  };
+
   return (
     <div className="w-64 bg-jobGray-lighter border-r border-jobGray min-h-screen flex flex-col">
       <div className="flex flex-col p-4 h-full">
@@ -90,14 +100,7 @@ const Sidebar: React.FC = () => {
         <div className="mb-6 flex flex-col space-y-2 px-2">
           <Button 
             className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90"
-            onClick={(e) => {
-              e.preventDefault();
-              // Create the URL with the right query parameter
-              const url = new URL('/dashboard', window.location.origin);
-              url.searchParams.set('form', 'job');
-              // Navigate to the URL
-              window.location.href = url.toString();
-            }}
+            onClick={() => handleFormNavigation('job')}
           >
             <PlusCircle className="h-4 w-4 mr-2" />
             <span>New Job</span>
@@ -106,12 +109,7 @@ const Sidebar: React.FC = () => {
           <Button 
             variant="outline" 
             className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed"
-            onClick={(e) => {
-              e.preventDefault();
-              const url = new URL('/dashboard', window.location.origin);
-              url.searchParams.set('form', 'file');
-              window.location.href = url.toString();
-            }}
+            onClick={() => handleFormNavigation('file')}
           >
             <FileUp className="h-4 w-4 mr-2" />
             <span>Book via File</span>
@@ -120,12 +118,7 @@ const Sidebar: React.FC = () => {
           <Button 
             variant="outline" 
             className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed"
-            onClick={(e) => {
-              e.preventDefault();
-              const url = new URL('/dashboard', window.location.origin);
-              url.searchParams.set('form', 'ucid');
-              window.location.href = url.toString();
-            }}
+            onClick={() => handleFormNavigation('ucid')}
           >
             <File className="h-4 w-4 mr-2" />
             <span>Request New UCID</span>
