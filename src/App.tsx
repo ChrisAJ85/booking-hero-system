@@ -12,6 +12,7 @@ import Documents from "./pages/Documents";
 import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/UserManagement";
+import ClientManagement from "./pages/ClientManagement";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Create a query client
@@ -51,6 +52,11 @@ const App = () => {
                 <Route path="/users" element={
                   <ProtectedRoute requiredRole="admin">
                     <UserManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/clients" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <ClientManagement />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />

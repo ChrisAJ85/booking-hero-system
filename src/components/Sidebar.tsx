@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Clock, FileText, LayoutDashboard, Search, User, Users } from 'lucide-react';
+import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/utils/auth';
 
@@ -31,6 +31,12 @@ const Sidebar: React.FC = () => {
       name: 'User Management',
       icon: <Users className="h-5 w-5" />,
       path: '/users',
+      allowed: isAdmin()
+    },
+    {
+      name: 'Client Management',
+      icon: <Building className="h-5 w-5" />,
+      path: '/clients',
       allowed: isAdmin()
     }
   ];

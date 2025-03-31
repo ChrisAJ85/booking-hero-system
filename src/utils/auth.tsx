@@ -4,11 +4,29 @@ import { toast } from "@/hooks/use-toast";
 
 export type UserRole = 'admin' | 'manager' | 'user';
 
-export interface User {
+export interface SubClient {
   id: string;
   name: string;
+}
+
+export interface Client {
+  id: string;
+  name: string;
+  businessName: string;
+  subClients: SubClient[];
+}
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  name: string; // Full name (firstName + lastName)
   email: string;
+  mobileNumber?: string;
+  landlineNumber?: string;
+  businessName?: string;
   role: UserRole;
+  allowedSubClients?: string[]; // IDs of sub-clients this user can book jobs for
 }
 
 interface AuthContextType {
@@ -22,9 +40,59 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const users: User[] = [
-  { id: '1', name: 'Admin User', email: 'admin@example.com', role: 'admin' },
-  { id: '2', name: 'Manager User', email: 'manager@example.com', role: 'manager' },
-  { id: '3', name: 'Regular User', email: 'user@example.com', role: 'user' },
+  { 
+    id: '1', 
+    firstName: 'Admin', 
+    lastName: 'User', 
+    name: 'Admin User', 
+    email: 'admin@example.com', 
+    mobileNumber: '07700 900123',
+    role: 'admin' 
+  },
+  { 
+    id: '2', 
+    firstName: 'Manager', 
+    lastName: 'User', 
+    name: 'Manager User', 
+    email: 'manager@example.com', 
+    mobileNumber: '07700 900456',
+    businessName: 'Management Ltd',
+    role: 'manager' 
+  },
+  { 
+    id: '3', 
+    firstName: 'Regular', 
+    lastName: 'User', 
+    name: 'Regular User', 
+    email: 'user@example.com', 
+    mobileNumber: '07700 900789',
+    landlineNumber: '01234 567890',
+    businessName: 'Client Company Ltd',
+    role: 'user',
+    allowedSubClients: ['1', '2'] 
+  },
+];
+
+// Sample clients data
+export const clients: Client[] = [
+  {
+    id: '1',
+    name: 'Main Client Ltd',
+    businessName: 'Main Client Business',
+    subClients: [
+      { id: '1', name: 'Sub Client A' },
+      { id: '2', name: 'Sub Client B' }
+    ]
+  },
+  {
+    id: '2',
+    name: 'Secondary Client Inc',
+    businessName: 'Secondary Business Name',
+    subClients: [
+      { id: '3', name: 'Sub Department 1' },
+      { id: '4', name: 'Sub Department 2' }
+    ]
+  }
 ];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
