@@ -87,18 +87,24 @@ const Sidebar: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="mt-2 mb-4 flex flex-col space-y-2 px-2">
-          <Button className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90">
-            <PlusCircle className="h-4 w-4 mr-2" />
-            <span>New Job</span>
-          </Button>
-          <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
-            <FileUp className="h-4 w-4 mr-2" />
-            <span>Book via File</span>
-          </Button>
-          <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
-            <File className="h-4 w-4 mr-2" />
-            <span>Request New UCID</span>
-          </Button>
+          <Link to="/dashboard?form=job">
+            <Button className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90">
+              <PlusCircle className="h-4 w-4 mr-2" />
+              <span>New Job</span>
+            </Button>
+          </Link>
+          <Link to="/dashboard?form=file">
+            <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
+              <FileUp className="h-4 w-4 mr-2" />
+              <span>Book via File</span>
+            </Button>
+          </Link>
+          <Link to="/dashboard?form=ucid">
+            <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
+              <File className="h-4 w-4 mr-2" />
+              <span>Request New UCID</span>
+            </Button>
+          </Link>
         </div>
 
         <div className="space-y-1">

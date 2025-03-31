@@ -58,6 +58,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
     itemCount: z.coerce.number().int().min(0).optional(),
     subClientName: z.string().optional(),
     clientName: z.string().optional(),
+    emanifestId: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -67,6 +68,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
       itemCount: job.itemCount,
       subClientName: job.subClientName || '',
       clientName: job.clientName || '',
+      emanifestId: job.emanifestId || '',
     },
   });
 
@@ -83,6 +85,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
       handoverDate: handoverDate?.toISOString() || job.handoverDate,
       subClientName: values.subClientName || undefined,
       clientName: values.clientName || undefined,
+      emanifestId: values.emanifestId || undefined,
     };
 
     JobStore.updateJob(updatedJob);
@@ -135,6 +138,20 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
             )}
           />
         </div>
+        
+        <FormField
+          control={form.control}
+          name="emanifestId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>E-Manifest ID</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="Enter E-Manifest ID" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         
         <FormField
           control={form.control}
