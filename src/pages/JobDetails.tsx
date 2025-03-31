@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -177,14 +178,32 @@ const JobDetails = () => {
 
                       {customFields && (
                         <>
-                          {(customFields.mailingHouse || customFields.poNumber) && (
+                          {(customFields.customerName || customFields.subClientName || customFields.mailingHouse || customFields.jobName || customFields.poNumber) && (
                             <div className="pt-2">
                               <h3 className="text-md font-medium border-b pb-1 mb-2">Customer Information</h3>
                               <div className="grid grid-cols-2 gap-4">
+                                {customFields.customerName && (
+                                  <div>
+                                    <h3 className="text-sm font-medium text-gray-500">Customer</h3>
+                                    <p className="mt-1">{customFields.customerName}</p>
+                                  </div>
+                                )}
+                                {customFields.subClientName && (
+                                  <div>
+                                    <h3 className="text-sm font-medium text-gray-500">Subclient</h3>
+                                    <p className="mt-1">{customFields.subClientName}</p>
+                                  </div>
+                                )}
                                 {customFields.mailingHouse && (
                                   <div>
                                     <h3 className="text-sm font-medium text-gray-500">Mailing House</h3>
                                     <p className="mt-1">{customFields.mailingHouse}</p>
+                                  </div>
+                                )}
+                                {customFields.jobName && (
+                                  <div>
+                                    <h3 className="text-sm font-medium text-gray-500">Job Name</h3>
+                                    <p className="mt-1">{customFields.jobName}</p>
                                   </div>
                                 )}
                                 {customFields.poNumber && (
@@ -203,7 +222,8 @@ const JobDetails = () => {
                             </div>
                           )}
                           
-                          {(customFields.jobType || customFields.format || customFields.service || customFields.sortation) && (
+                          {(customFields.jobType || customFields.format || customFields.service || customFields.sortation || 
+                            customFields.mailType || customFields.presentation || customFields.itemWeight) && (
                             <div className="pt-2">
                               <h3 className="text-md font-medium border-b pb-1 mb-2">Job Specifications</h3>
                               <div className="grid grid-cols-2 gap-4">

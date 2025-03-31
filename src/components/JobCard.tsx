@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building, Calendar, Clock, ExternalLink, Paperclip, Users } from 'lucide-react';
+import { Building, Calendar, Clock, ExternalLink, FileUp, Paperclip, Users } from 'lucide-react';
 import { Job } from '@/utils/data';
 import { format } from 'date-fns';
 
@@ -34,11 +34,36 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
     }
   };
 
+  // Check if job was created via file upload
+  const isFileUpload = () => {
+    try {
+      if (job.description.includes('fileUpload')) {
+        const parts = job.description.split('\n\n');
+        if (parts.length > 1) {
+          const jsonStr = parts[parts.length - 1];
+          const parsedFields = JSON.parse(jsonStr);
+          return parsedFields.fileUpload === true;
+        }
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  };
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
-          <CardTitle className="text-lg font-medium">{job.title}</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-lg font-medium">{job.title}</CardTitle>
+            {isFileUpload() && (
+              <span className="inline-flex items-center text-xs text-blue-600">
+                <FileUp className="h-3 w-3 mr-1" />
+                File Upload
+              </span>
+            )}
+          </div>
           <Badge className={getStatusColor(job.status)}>
             {job.status.replace('_', ' ').toUpperCase()}
           </Badge>
@@ -46,7 +71,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         <p className="text-xs text-gray-500">Reference: {job.reference}</p>
       </CardHeader>
       <CardContent className="pb-2">
-        <p className="text-sm line-clamp-2 text-gray-600 mb-4">{job.description}</p>
+        <p className="text-sm line-clamp-2 text-gray-600 mb-4">{job.description.split('\n\n')[0]}</p>
         
         {job.subClientName && (
           <div className="mb-3 flex items-center text-sm text-jobGray">

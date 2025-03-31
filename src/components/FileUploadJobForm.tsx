@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -39,13 +40,54 @@ const FileUploadJobForm: React.FC = () => {
     
     // Simulate processing the file
     setTimeout(() => {
-      // Create a sample job from the file
-      // Store additional metadata in the description as JSON to work around typing limitations
+      // Create random sample data for the job fields
+      const mailingHouses = ["Mailing House A", "Mailing House B"];
+      const jobTypes = ["Unsorted", "Sorted"];
+      const formats = ["Letter", "Large Letter", "Packets"];
+      const services = ["Priority", "Standard", "Economy"];
+      const sortations = ["Mailmark", "Manual", "Poll Sort"];
+      const mailTypes = ["Advertising Mail", "Business Mail", "Partially Addressed Mail", "Catalogue Mail"];
+      const presentations = ["Trays", "Bags", "Bundles"];
+      const bureauServices = ["Print and Post", "Label File Only"];
+      const dataTypes = ["Raw Data", "Sorted Data"];
+      const bagLabels = ["White", "Yellow"];
+      
+      // Generate random values
+      const getRandomItem = (array: string[]) => array[Math.floor(Math.random() * array.length)];
+      const getRandomNumber = (max: number) => Math.floor(Math.random() * max) + 1;
+      const getRandomDate = () => new Date(Date.now() + getRandomNumber(30) * 24 * 60 * 60 * 1000).toISOString();
+      
+      // Store additional metadata as JSON
       const customFieldsJson = JSON.stringify({
         fileUpload: true,
         fileName: file.name,
         fileType: file.type,
-        uploadDate: new Date().toISOString()
+        uploadDate: new Date().toISOString(),
+        customerName: user?.clientName || "Sample Customer",
+        subClientName: user?.subClients?.[0]?.name || "Sample Subclient",
+        mailingHouse: getRandomItem(mailingHouses),
+        jobName: `Job from ${file.name}`,
+        poNumber: `PO-${getRandomNumber(9999)}`,
+        fdm: Math.random() > 0.5,
+        itemWeight: getRandomNumber(500),
+        jobType: getRandomItem(jobTypes),
+        format: getRandomItem(formats),
+        service: getRandomItem(services),
+        sortation: getRandomItem(sortations),
+        mailType: getRandomItem(mailTypes),
+        presentation: getRandomItem(presentations),
+        bureauService: getRandomItem(bureauServices),
+        dataType: getRandomItem(dataTypes),
+        consumablesRequired: Math.random() > 0.5,
+        productionStartDate: getRandomDate(),
+        productionEndDate: getRandomDate(),
+        consumablesRequiredDate: getRandomDate(),
+        bagLabels: getRandomItem(bagLabels),
+        trays: getRandomNumber(20),
+        magnums: getRandomNumber(5),
+        pallets: getRandomNumber(3),
+        yorks: getRandomNumber(2),
+        additionalInfo: `Automatically processed from file: ${file.name}\nGenerated job with random sample data`
       });
       
       const newJob = JobStore.addJob({
@@ -54,8 +96,8 @@ const FileUploadJobForm: React.FC = () => {
         status: 'pending',
         collectionDate: new Date().toISOString(),
         handoverDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-        itemCount: Math.floor(Math.random() * 100) + 1,
-        bagCount: Math.floor(Math.random() * 10) + 1,
+        itemCount: getRandomNumber(100),
+        bagCount: getRandomNumber(10),
         createdBy: user?.name || 'Unknown',
         files: [{
           id: `file-${Date.now()}`,
