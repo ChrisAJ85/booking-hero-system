@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
 import FileUploadJobForm from '@/components/FileUploadJobForm';
 import UCIDRequestForm from '@/components/UCIDRequestForm';
+import JobForm from '@/components/JobForm';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Job, JobStore } from '@/utils/data';

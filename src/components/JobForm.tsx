@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,12 +16,11 @@ import { Switch } from '@/components/ui/switch';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { JobStore, ClientStore } from '@/utils/data';
+import { JobStore, ClientStore, Client } from '@/utils/data';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/utils/auth';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 
 type JobFormProps = {
   onSuccess?: () => void;
@@ -35,8 +35,7 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
   const [status, setStatus] = useState('pending');
   const [notes, setNotes] = useState('');
   const [isSubClient, setIsSubClient] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [clients, setClients] = useState<string[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [subClients, setSubClients] = useState<string[]>([]);
   const [selectedClient, setSelectedClient] = useState("");
   const [selectedSubClient, setSelectedSubClient] = useState("");
@@ -50,13 +49,19 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
 
   useEffect(() => {
     if (clientName) {
-      const storedSubClients = ClientStore.getSubClients(clientName);
-      setSubClients(storedSubClients);
+      // Find the client and get their sub-clients
+      const client = clients.find(c => c.name === clientName);
+      if (client && client.subClients) {
+        const subClientNames = client.subClients.map(sc => sc.name);
+        setSubClients(subClientNames);
+      } else {
+        setSubClients([]);
+      }
     } else {
       setSubClients([]);
       setSubClientName('');
     }
-  }, [clientName]);
+  }, [clientName, clients]);
 
   const generateJobId = () => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -81,9 +86,14 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
       reference,
       clientName,
       subClientName: isSubClient ? subClientName : '',
+      description: "",
       collectionDate: collectionDate.toISOString(),
+      handoverDate: collectionDate.toISOString(),
       status,
       notes,
+      itemCount: 0,
+      bagCount: 0,
+      files: [],
       createdBy: user?.name || 'Unknown',
       createdAt: new Date().toISOString(),
     };
@@ -147,10 +157,9 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
             <SelectValue placeholder="Select a client" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">None</SelectItem>
             {clients.map((client) => (
-              <SelectItem key={client} value={client}>
-                {client}
+              <SelectItem key={client.id} value={client.name}>
+                {client.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -176,7 +185,7 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
       {isSubClient && (
         <div>
           <Label htmlFor="subClientName">Sub Client Name</Label>
-          <Select onValueChange={handleSubClientChange}>
+          <Select onValueChange={handleSubClientChange} disabled={subClients.length === 0}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a sub client" />
             </SelectTrigger>
@@ -215,9 +224,6 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
               mode="single"
               selected={collectionDate}
               onSelect={setCollectionDate}
-              disabled={(date) =>
-                date > new Date()
-              }
               initialFocus
             />
           </PopoverContent>
