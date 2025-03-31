@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -10,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Job, JobStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
-import { Calendar, Clock, File, Users, AlertTriangle, ExternalLink, Eye } from 'lucide-react';
+import { Calendar, Clock, Eye, File, Users, AlertTriangle, ExternalLink } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -22,12 +21,24 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const Dashboard = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [activeTab, setActiveTab] = useState('all');
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [showMissingEmanifestDialog, setShowMissingEmanifestDialog] = useState(false);
   
   useEffect(() => {
     // Load jobs from the store
@@ -84,6 +95,10 @@ const Dashboard = () => {
     }
   };
 
+  const handleShowMissingEmanifests = () => {
+    setShowMissingEmanifestDialog(true);
+  };
+
   const handleShowEmanifest = (job: Job) => {
     if (job.emanifestId) {
       toast({
@@ -118,8 +133,17 @@ const Dashboard = () => {
               <Alert variant="destructive" className="mb-6">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Missing eManifest IDs</AlertTitle>
-                <AlertDescription>
-                  There are {missingEmanifestJobs.length} jobs missing eManifest IDs. These jobs are highlighted in red below.
+                <AlertDescription className="flex justify-between items-center">
+                  <span>There are {missingEmanifestJobs.length} jobs missing eManifest IDs. These jobs are highlighted in red below.</span>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleShowMissingEmanifests}
+                    className="flex items-center gap-1 mt-2 bg-white"
+                  >
+                    <Eye className="h-3.5 w-3.5" />
+                    <span>Show missing</span>
+                  </Button>
                 </AlertDescription>
               </Alert>
             )}
@@ -529,6 +553,59 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialog to show missing eManifest jobs */}
+      <AlertDialog open={showMissingEmanifestDialog} onOpenChange={setShowMissingEmanifestDialog}>
+        <AlertDialogContent className="max-w-3xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Jobs Missing eManifest IDs</AlertDialogTitle>
+            <AlertDialogDescription>
+              The following jobs are missing eManifest IDs and require attention.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          
+          <div className="max-h-[60vh] overflow-auto my-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Job Title</TableHead>
+                  <TableHead>Reference</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Collection Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {missingEmanifestJobs.map(job => (
+                  <TableRow key={job.id} className="bg-red-50">
+                    <TableCell className="font-medium">{job.title}</TableCell>
+                    <TableCell>{job.reference}</TableCell>
+                    <TableCell>{job.subClientName || job.clientName}</TableCell>
+                    <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                    <TableCell>{getStatusBadge(job.status)}</TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => navigate(`/jobs/${job.id}`)}
+                        className="flex items-center gap-1 p-1 h-auto"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        <span>View</span>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

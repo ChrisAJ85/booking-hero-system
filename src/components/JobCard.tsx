@@ -2,11 +2,9 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building, Calendar, Clock, Eye, ExternalLink, Paperclip, Users } from 'lucide-react';
+import { Building, Calendar, Clock, ExternalLink, Paperclip, Users } from 'lucide-react';
 import { Job } from '@/utils/data';
 import { format } from 'date-fns';
-import { Button } from '@/components/ui/button';
-import { toast } from '@/hooks/use-toast';
 
 interface JobCardProps {
   job: Job;
@@ -33,21 +31,6 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
       return format(new Date(dateString), 'MMM dd, yyyy • h:mm a');
     } catch (e) {
       return dateString;
-    }
-  };
-
-  const handleShowEmanifest = () => {
-    if (job.emanifestId) {
-      toast({
-        title: "eManifest Details",
-        description: `eManifest ID: ${job.emanifestId} for job: ${job.title}`,
-      });
-    } else {
-      toast({
-        title: "Missing eManifest",
-        description: "This job does not have an eManifest ID assigned.",
-        variant: "destructive"
-      });
     }
   };
 
@@ -99,21 +82,10 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           <Clock className="h-3 w-3 mr-1" />
           <span>Created: {formatDate(job.createdAt)}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleShowEmanifest}
-            className="flex items-center gap-1 p-1 h-auto"
-          >
-            <Eye className="h-3 w-3" />
-            <span>Show</span>
-          </Button>
-          <Link to={`/jobs/${job.id}`} className="text-jobGray hover:underline flex items-center gap-1">
-            <span>View details</span>
-            <ExternalLink className="h-3 w-3" />
-          </Link>
-        </div>
+        <Link to={`/jobs/${job.id}`} className="text-jobGray hover:underline flex items-center gap-1">
+          <span>View details</span>
+          <ExternalLink className="h-3 w-3" />
+        </Link>
       </CardFooter>
     </Card>
   );
