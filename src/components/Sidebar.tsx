@@ -88,24 +88,38 @@ const Sidebar: React.FC = () => {
 
         {/* Action Buttons */}
         <div className="mb-6 flex flex-col space-y-2 px-2">
-          <Link to="/dashboard?form=job" className="w-full">
-            <Button className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90">
-              <PlusCircle className="h-4 w-4 mr-2" />
-              <span>New Job</span>
-            </Button>
-          </Link>
-          <Link to="/dashboard?form=file" className="w-full">
-            <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
-              <FileUp className="h-4 w-4 mr-2" />
-              <span>Book via File</span>
-            </Button>
-          </Link>
-          <Link to="/dashboard?form=ucid" className="w-full">
-            <Button variant="outline" className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed">
-              <File className="h-4 w-4 mr-2" />
-              <span>Request New UCID</span>
-            </Button>
-          </Link>
+          <Button 
+            className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90"
+            onClick={() => {
+              // Using window.location to force a refresh with the query parameter
+              window.location.href = '/dashboard?form=job';
+            }}
+          >
+            <PlusCircle className="h-4 w-4 mr-2" />
+            <span>New Job</span>
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed"
+            onClick={() => {
+              window.location.href = '/dashboard?form=file';
+            }}
+          >
+            <FileUp className="h-4 w-4 mr-2" />
+            <span>Book via File</span>
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed"
+            onClick={() => {
+              window.location.href = '/dashboard?form=ucid';
+            }}
+          >
+            <File className="h-4 w-4 mr-2" />
+            <span>Request New UCID</span>
+          </Button>
         </div>
 
         {/* Navigation Menu */}
