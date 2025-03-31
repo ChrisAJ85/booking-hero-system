@@ -30,7 +30,7 @@ const Sidebar: React.FC = () => {
     {
       name: 'User Management',
       icon: <Users className="h-5 w-5" />,
-      path: '#',
+      path: '/users',
       allowed: isAdmin()
     }
   ];
