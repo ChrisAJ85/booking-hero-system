@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
-import JobForm from '@/components/JobForm';
 import FileUploadJobForm from '@/components/FileUploadJobForm';
 import UCIDRequestForm from '@/components/UCIDRequestForm';
 import { Button } from '@/components/ui/button';
@@ -573,16 +572,6 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
-      <Dialog open={activeForm === 'job'} onOpenChange={(open) => !open && handleCloseForm()}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>New Job</DialogTitle>
-            <DialogDescription>Enter the details for the new job</DialogDescription>
-          </DialogHeader>
-          <JobForm />
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={activeForm === 'file'} onOpenChange={(open) => !open && handleCloseForm()}>
         <DialogContent className="max-w-3xl">
