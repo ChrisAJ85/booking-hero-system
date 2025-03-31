@@ -10,7 +10,14 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-jobBlue text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/dashboard" className="text-xl font-bold">Job Booking System</Link>
+        <div className="flex items-center">
+          <img 
+            src="/lovable-uploads/9bd772b9-fc9d-467e-b936-39e8438d452d.png" 
+            alt="Job Booking System Logo" 
+            className="h-8 mr-3"
+          />
+          <Link to="/dashboard" className="text-xl font-bold">Job Booking System</Link>
+        </div>
         
         <div className="flex items-center space-x-6">
           <Link to="/dashboard" className="flex items-center hover:text-gray-200">
