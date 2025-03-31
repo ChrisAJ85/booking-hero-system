@@ -74,6 +74,19 @@ export interface ArtworkSubmission {
   feedbackComments?: string;
 }
 
+export interface Client {
+  id: string;
+  name: string;
+  businessName?: string;
+  subClients: SubClient[];
+}
+
+export interface SubClient {
+  id: string;
+  name: string;
+  clientId?: string;
+}
+
 export const generateJobReference = (): string => {
   const prefix = 'JOB';
   const timestamp = Date.now().toString().slice(-6);
@@ -312,6 +325,35 @@ export const mockArtworkSubmissions: ArtworkSubmission[] = [
   }
 ];
 
+export const mockClients: Client[] = [
+  {
+    id: 'client-1',
+    name: 'ABC Corporation',
+    businessName: 'ABC Inc.',
+    subClients: [
+      {
+        id: 'subclient-1',
+        name: 'Marketing Department'
+      },
+      {
+        id: 'subclient-2',
+        name: 'Sales Department'
+      }
+    ]
+  },
+  {
+    id: 'client-2',
+    name: 'XYZ Industries',
+    businessName: 'XYZ Ltd',
+    subClients: [
+      {
+        id: 'subclient-3',
+        name: 'European Division'
+      }
+    ]
+  }
+];
+
 export const getJobById = (jobId: string): Job | undefined => {
   return mockJobs.find(job => job.id === jobId);
 };
@@ -489,5 +531,97 @@ export const ArtworkStore = {
     const submissions = ArtworkStore.getSubmissions();
     const filteredSubmissions = submissions.filter(submission => submission.id !== submissionId);
     ArtworkStore.saveSubmissions(filteredSubmissions);
+  }
+};
+
+export const ClientStore = {
+  getClients: (): Client[] => {
+    const storedClients = localStorage.getItem('jobSystemClients');
+    return storedClients ? JSON.parse(storedClients) : mockClients;
+  },
+  
+  saveClients: (clients: Client[]): void => {
+    localStorage.setItem('jobSystemClients', JSON.stringify(clients));
+  },
+  
+  addClient: (client: Omit<Client, 'id'>): Client => {
+    const clients = ClientStore.getClients();
+    const newClient: Client = {
+      ...client,
+      id: `client-${Date.now()}`,
+    };
+    
+    const updatedClients = [...clients, newClient];
+    ClientStore.saveClients(updatedClients);
+    return newClient;
+  },
+  
+  updateClient: (updatedClient: Client): Client => {
+    const clients = ClientStore.getClients();
+    const updatedClients = clients.map(client => 
+      client.id === updatedClient.id ? updatedClient : client
+    );
+    ClientStore.saveClients(updatedClients);
+    return updatedClient;
+  },
+  
+  deleteClient: (clientId: string): void => {
+    const clients = ClientStore.getClients();
+    const filteredClients = clients.filter(client => client.id !== clientId);
+    ClientStore.saveClients(filteredClients);
+  },
+  
+  addSubClient: (clientId: string, subClient: Omit<SubClient, 'id'>): SubClient | null => {
+    const clients = ClientStore.getClients();
+    const clientIndex = clients.findIndex(client => client.id === clientId);
+    
+    if (clientIndex === -1) return null;
+    
+    const newSubClient: SubClient = {
+      ...subClient,
+      id: `subclient-${Date.now()}`,
+      clientId: clientId
+    };
+    
+    if (!clients[clientIndex].subClients) {
+      clients[clientIndex].subClients = [];
+    }
+    
+    clients[clientIndex].subClients.push(newSubClient);
+    ClientStore.saveClients(clients);
+    
+    return newSubClient;
+  },
+  
+  updateSubClient: (clientId: string, updatedSubClient: SubClient): SubClient | null => {
+    const clients = ClientStore.getClients();
+    const clientIndex = clients.findIndex(client => client.id === clientId);
+    
+    if (clientIndex === -1) return null;
+    
+    const subClientIndex = clients[clientIndex].subClients.findIndex(
+      sc => sc.id === updatedSubClient.id
+    );
+    
+    if (subClientIndex === -1) return null;
+    
+    clients[clientIndex].subClients[subClientIndex] = updatedSubClient;
+    ClientStore.saveClients(clients);
+    
+    return updatedSubClient;
+  },
+  
+  deleteSubClient: (clientId: string, subClientId: string): boolean => {
+    const clients = ClientStore.getClients();
+    const clientIndex = clients.findIndex(client => client.id === clientId);
+    
+    if (clientIndex === -1) return false;
+    
+    clients[clientIndex].subClients = clients[clientIndex].subClients.filter(
+      sc => sc.id !== subClientId
+    );
+    
+    ClientStore.saveClients(clients);
+    return true;
   }
 };

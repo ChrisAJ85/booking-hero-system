@@ -1,7 +1,8 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
-import { useAuth, Client, clients, SubClient } from '@/utils/auth';
+import { useAuth, Client, SubClient } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { 
   Table, 
@@ -23,10 +24,11 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Building, Plus, Edit, Trash2, Users, ChevronDown, ChevronRight } from 'lucide-react';
+import { ClientStore } from '@/utils/data';
 
 const ClientManagement = () => {
   const { isAdmin } = useAuth();
-  const [clientsList, setClientsList] = useState<Client[]>(clients);
+  const [clientsList, setClientsList] = useState<Client[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [subClientDialogOpen, setSubClientDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -42,6 +44,12 @@ const ClientManagement = () => {
   const [subClientFormData, setSubClientFormData] = useState({
     name: ''
   });
+
+  // Load clients from storage on component mount
+  useEffect(() => {
+    const loadedClients = ClientStore.getClients();
+    setClientsList(loadedClients);
+  }, []);
 
   if (!isAdmin()) {
     return (
@@ -110,7 +118,7 @@ const ClientManagement = () => {
     setEditingClient(client);
     setClientFormData({
       name: client.name,
-      businessName: client.businessName
+      businessName: client.businessName || ''
     });
     setDialogOpen(true);
   };
@@ -142,15 +150,19 @@ const ClientManagement = () => {
       return;
     }
 
-    let updatedClients: Client[];
-    
     if (editingClient) {
-      updatedClients = clientsList.map(c => 
-        c.id === editingClient.id ? { 
-          ...c, 
-          name: clientFormData.name,
-          businessName: clientFormData.businessName
-        } : c
+      // Update existing client
+      const updatedClient = {
+        ...editingClient,
+        name: clientFormData.name,
+        businessName: clientFormData.businessName
+      };
+      
+      ClientStore.updateClient(updatedClient);
+      
+      // Update local state
+      setClientsList(prevClients =>
+        prevClients.map(c => c.id === updatedClient.id ? updatedClient : c)
       );
       
       toast({
@@ -158,14 +170,15 @@ const ClientManagement = () => {
         description: "Client has been updated successfully."
       });
     } else {
-      const newClient: Client = {
-        id: `client-${Date.now()}`,
+      // Add new client
+      const newClient = ClientStore.addClient({
         name: clientFormData.name,
         businessName: clientFormData.businessName,
         subClients: []
-      };
+      });
       
-      updatedClients = [...clientsList, newClient];
+      // Update local state
+      setClientsList(prevClients => [...prevClients, newClient]);
       
       toast({
         title: "Client Added",
@@ -173,7 +186,6 @@ const ClientManagement = () => {
       });
     }
     
-    setClientsList(updatedClients);
     setDialogOpen(false);
     resetClientForm();
   };
@@ -193,66 +205,91 @@ const ClientManagement = () => {
     const clientId = editingSubClient.clientId;
     console.log("Submitting sub-client for client ID:", clientId);
     
-    let updatedClients = [...clientsList];
-    const clientIndex = updatedClients.findIndex(c => c.id === clientId);
-    
-    if (clientIndex === -1) {
-      console.error("Client not found with ID:", clientId);
-      toast({
-        title: "Error",
-        description: "Client not found.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    console.log("Found client at index:", clientIndex);
-    
     if (editingSubClient.subClient) {
-      const subClientIndex = updatedClients[clientIndex].subClients.findIndex(
-        sc => sc.id === editingSubClient.subClient?.id
-      );
+      // Update existing sub-client
+      const updatedSubClient = {
+        ...editingSubClient.subClient,
+        name: subClientFormData.name
+      };
       
-      if (subClientIndex !== -1) {
-        updatedClients[clientIndex].subClients[subClientIndex].name = subClientFormData.name;
+      const result = ClientStore.updateSubClient(clientId, updatedSubClient);
+      
+      if (result) {
+        // Update local state
+        setClientsList(prevClients =>
+          prevClients.map(client => {
+            if (client.id === clientId) {
+              return {
+                ...client,
+                subClients: client.subClients.map(sc => 
+                  sc.id === updatedSubClient.id ? updatedSubClient : sc
+                )
+              };
+            }
+            return client;
+          })
+        );
         
         toast({
           title: "Sub-Client Updated",
           description: "Sub-client has been updated successfully."
         });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to update sub-client.",
+          variant: "destructive"
+        });
       }
     } else {
-      const newSubClient: SubClient = {
-        id: `subclient-${Date.now()}`,
+      // Add new sub-client
+      const newSubClient = ClientStore.addSubClient(clientId, {
         name: subClientFormData.name
-      };
-      
-      if (!updatedClients[clientIndex].subClients) {
-        updatedClients[clientIndex].subClients = [];
-      }
-      
-      updatedClients[clientIndex].subClients.push(newSubClient);
-      console.log("Added new sub-client:", newSubClient);
-      console.log("Updated client subClients:", updatedClients[clientIndex].subClients);
-      
-      toast({
-        title: "Sub-Client Added",
-        description: "Sub-client has been added successfully."
       });
       
-      if (!expandedClients.includes(clientId)) {
-        setExpandedClients([...expandedClients, clientId]);
+      if (newSubClient) {
+        // Update local state
+        setClientsList(prevClients =>
+          prevClients.map(client => {
+            if (client.id === clientId) {
+              return {
+                ...client,
+                subClients: [...(client.subClients || []), newSubClient]
+              };
+            }
+            return client;
+          })
+        );
+        
+        toast({
+          title: "Sub-Client Added",
+          description: "Sub-client has been added successfully."
+        });
+        
+        // Ensure the client is expanded
+        if (!expandedClients.includes(clientId)) {
+          setExpandedClients([...expandedClients, clientId]);
+        }
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to add sub-client.",
+          variant: "destructive"
+        });
       }
     }
     
-    setClientsList(updatedClients);
     setSubClientDialogOpen(false);
     resetSubClientForm();
   };
 
   const handleDeleteClient = (clientId: string) => {
-    const updatedClients = clientsList.filter(c => c.id !== clientId);
-    setClientsList(updatedClients);
+    ClientStore.deleteClient(clientId);
+    
+    // Update local state
+    setClientsList(prevClients => 
+      prevClients.filter(client => client.id !== clientId)
+    );
     
     toast({
       title: "Client Deleted",
@@ -261,22 +298,33 @@ const ClientManagement = () => {
   };
 
   const handleDeleteSubClient = (clientId: string, subClientId: string) => {
-    const updatedClients = clientsList.map(client => {
-      if (client.id === clientId) {
-        return {
-          ...client,
-          subClients: client.subClients.filter(sc => sc.id !== subClientId)
-        };
-      }
-      return client;
-    });
+    const success = ClientStore.deleteSubClient(clientId, subClientId);
     
-    setClientsList(updatedClients);
-    
-    toast({
-      title: "Sub-Client Deleted",
-      description: "Sub-client has been deleted successfully."
-    });
+    if (success) {
+      // Update local state
+      setClientsList(prevClients =>
+        prevClients.map(client => {
+          if (client.id === clientId) {
+            return {
+              ...client,
+              subClients: client.subClients.filter(sc => sc.id !== subClientId)
+            };
+          }
+          return client;
+        })
+      );
+      
+      toast({
+        title: "Sub-Client Deleted",
+        description: "Sub-client has been deleted successfully."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to delete sub-client.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
