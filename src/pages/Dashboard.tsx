@@ -41,12 +41,8 @@ const Dashboard = () => {
   const [showMissingEmanifestDialog, setShowMissingEmanifestDialog] = useState(false);
   
   useEffect(() => {
-    // Load jobs from the store
     const loadedJobs = JobStore.getJobs();
-    
-    // Add emanifestId to existing jobs if they don't have one
     const updatedJobs = loadedJobs.map(job => {
-      // Jobs 1, 2, and 5 will have an emanifestId for demo purposes
       if (job.id === '1' && !job.emanifestId) {
         return { ...job, emanifestId: 'EM-123456' };
       }
@@ -58,8 +54,6 @@ const Dashboard = () => {
       }
       return job;
     });
-    
-    // Save the updated jobs back to the store
     JobStore.saveJobs(updatedJobs);
     setJobs(updatedJobs);
   }, []);
@@ -130,22 +124,28 @@ const Dashboard = () => {
             </div>
             
             {hasMissingEmanifests && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Missing eManifest IDs</AlertTitle>
-                <AlertDescription className="flex justify-between items-center">
-                  <span>There are {missingEmanifestJobs.length} jobs missing eManifest IDs. These jobs are highlighted in red below.</span>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleShowMissingEmanifests}
-                    className="flex items-center gap-1 mt-2 bg-white"
-                  >
-                    <Eye className="h-3.5 w-3.5" />
-                    <span>Show missing</span>
-                  </Button>
-                </AlertDescription>
-              </Alert>
+              <div className="mb-6 bg-[#FEF7CD] border border-amber-400 rounded-lg p-4">
+                <div className="flex items-start">
+                  <AlertTriangle className="h-6 w-6 text-black mr-3 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="text-black font-semibold text-lg">Missing eManifest IDs</h3>
+                    <div className="flex justify-between items-center mt-1">
+                      <p className="text-black">
+                        There are {missingEmanifestJobs.length} jobs missing eManifest IDs. These jobs are highlighted in red below.
+                      </p>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleShowMissingEmanifests}
+                        className="flex items-center gap-1 mt-1 bg-white border-amber-400 text-black hover:bg-amber-50"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        <span>Show missing</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -554,7 +554,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Dialog to show missing eManifest jobs */}
       <AlertDialog open={showMissingEmanifestDialog} onOpenChange={setShowMissingEmanifestDialog}>
         <AlertDialogContent className="max-w-3xl">
           <AlertDialogHeader>
@@ -573,6 +572,7 @@ const Dashboard = () => {
                   <TableHead>Client</TableHead>
                   <TableHead>Collection Date</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>eManifest ID</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
