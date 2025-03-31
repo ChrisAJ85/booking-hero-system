@@ -1,4 +1,3 @@
-
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +33,6 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
     }
   };
 
-  // Check if job was created via file upload
   const isFileUpload = () => {
     try {
       if (job.description && job.description.includes('fileUpload')) {
@@ -51,7 +49,6 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
     }
   };
 
-  // Extract custom fields if available
   const getCustomFields = () => {
     try {
       if (job.description && job.description.includes('{')) {
@@ -69,7 +66,6 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
   
   const customFields = getCustomFields();
   
-  // Get clean description without the JSON part
   const getCleanDescription = () => {
     if (!job.description) return '';
     const parts = job.description.split('\n\n');
@@ -126,12 +122,10 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           </div>
         </div>
         
-        {job.itemCount > 0 && (
-          <div className="mt-2 flex items-center text-xs text-gray-600">
-            <Package className="h-3 w-3 mr-1 text-jobGray" />
-            <span>Items: {job.itemCount.toLocaleString()}</span>
-          </div>
-        )}
+        <div className="mt-2 flex items-center text-xs text-gray-600">
+          <Package className="h-3 w-3 mr-1 text-jobGray" />
+          <span>Items: {job.itemCount?.toLocaleString() || 0}</span>
+        </div>
       </CardContent>
       <CardFooter className="flex justify-between border-t pt-3 text-xs text-gray-500">
         <div className="flex items-center">
