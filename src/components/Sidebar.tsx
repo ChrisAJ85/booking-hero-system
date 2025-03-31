@@ -82,14 +82,17 @@ const Sidebar: React.FC = () => {
         </div>
 
         <div className="space-y-1">
-          <JobForm>
-            <div className={cn(
-              "flex items-center px-4 py-3 text-sm rounded-md text-jobGray-dark hover:bg-gray-200 hover:text-jobRed"
-            )}>
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start p-0 h-auto font-normal hover:bg-gray-200 hover:text-jobRed"
+            onClick={() => document.getElementById('job-form-trigger')?.click()}
+          >
+            <div className="flex items-center px-4 py-3 text-sm rounded-md text-jobGray-dark">
               <span className="mr-3"><Plus className="h-5 w-5" /></span>
               New Job
             </div>
-          </JobForm>
+          </Button>
+          <JobForm />
           
           {navItems
             .filter(item => item.allowed)

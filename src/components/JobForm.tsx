@@ -396,7 +396,7 @@ const JobForm: React.FC = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-jobBlue hover:bg-jobBlue-light">
+        <Button id="job-form-trigger" className="hidden">
           <Plus className="mr-2 h-4 w-4" /> New Job
         </Button>
       </DialogTrigger>
