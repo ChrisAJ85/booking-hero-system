@@ -1,10 +1,11 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush, Plus } from 'lucide-react';
+import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush, Plus, FileUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/utils/auth';
 import { Button } from './ui/button';
 import JobForm from './JobForm';
+import FileUploadJobForm from './FileUploadJobForm';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
@@ -93,6 +94,18 @@ const Sidebar: React.FC = () => {
             </div>
           </Button>
           <JobForm />
+          
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start p-0 h-auto font-normal hover:bg-gray-200 hover:text-jobRed"
+            onClick={() => document.getElementById('file-upload-job-form-trigger')?.click()}
+          >
+            <div className="flex items-center px-4 py-3 text-sm rounded-md text-jobGray-dark">
+              <span className="mr-3"><FileUp className="h-5 w-5" /></span>
+              Book via File
+            </div>
+          </Button>
+          <FileUploadJobForm />
           
           {navItems
             .filter(item => item.allowed)

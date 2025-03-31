@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -124,7 +125,7 @@ const FileUploadJobForm: React.FC = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-jobBlue hover:bg-jobBlue-light">
+        <Button id="file-upload-job-form-trigger" className="hidden">
           <FileUp className="mr-2 h-4 w-4" /> Book via File
         </Button>
       </DialogTrigger>
