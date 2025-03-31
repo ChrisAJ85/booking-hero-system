@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
@@ -117,6 +116,7 @@ const ClientManagement = () => {
   };
 
   const handleAddSubClient = (clientId: string) => {
+    console.log("Adding sub-client for client ID:", clientId);
     setEditingSubClient({ subClient: null, clientId });
     resetSubClientForm();
     setSubClientDialogOpen(true);
@@ -145,7 +145,6 @@ const ClientManagement = () => {
     let updatedClients: Client[];
     
     if (editingClient) {
-      // Edit existing client
       updatedClients = clientsList.map(c => 
         c.id === editingClient.id ? { 
           ...c, 
@@ -159,7 +158,6 @@ const ClientManagement = () => {
         description: "Client has been updated successfully."
       });
     } else {
-      // Add new client
       const newClient: Client = {
         id: `client-${Date.now()}`,
         name: clientFormData.name,
@@ -193,10 +191,13 @@ const ClientManagement = () => {
     }
 
     const clientId = editingSubClient.clientId;
+    console.log("Submitting sub-client for client ID:", clientId);
+    
     let updatedClients = [...clientsList];
     const clientIndex = updatedClients.findIndex(c => c.id === clientId);
     
     if (clientIndex === -1) {
+      console.error("Client not found with ID:", clientId);
       toast({
         title: "Error",
         description: "Client not found.",
@@ -205,8 +206,9 @@ const ClientManagement = () => {
       return;
     }
     
+    console.log("Found client at index:", clientIndex);
+    
     if (editingSubClient.subClient) {
-      // Edit existing sub-client
       const subClientIndex = updatedClients[clientIndex].subClients.findIndex(
         sc => sc.id === editingSubClient.subClient?.id
       );
@@ -220,20 +222,24 @@ const ClientManagement = () => {
         });
       }
     } else {
-      // Add new sub-client
       const newSubClient: SubClient = {
         id: `subclient-${Date.now()}`,
         name: subClientFormData.name
       };
       
+      if (!updatedClients[clientIndex].subClients) {
+        updatedClients[clientIndex].subClients = [];
+      }
+      
       updatedClients[clientIndex].subClients.push(newSubClient);
+      console.log("Added new sub-client:", newSubClient);
+      console.log("Updated client subClients:", updatedClients[clientIndex].subClients);
       
       toast({
         title: "Sub-Client Added",
         description: "Sub-client has been added successfully."
       });
       
-      // Ensure the client is expanded
       if (!expandedClients.includes(clientId)) {
         setExpandedClients([...expandedClients, clientId]);
       }
@@ -327,7 +333,6 @@ const ClientManagement = () => {
                 </DialogContent>
               </Dialog>
               
-              {/* Sub-Client Dialog */}
               <Dialog open={subClientDialogOpen} onOpenChange={setSubClientDialogOpen}>
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
@@ -404,7 +409,7 @@ const ClientManagement = () => {
                             </div>
                           </TableCell>
                           <TableCell>{client.businessName}</TableCell>
-                          <TableCell>{client.subClients.length}</TableCell>
+                          <TableCell>{client.subClients ? client.subClients.length : 0}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end space-x-2">
                               <Button 
@@ -458,8 +463,7 @@ const ClientManagement = () => {
                           </TableCell>
                         </TableRow>
                         
-                        {/* Sub-clients rows (expandable) */}
-                        {expandedClients.includes(client.id) && client.subClients.map(subClient => (
+                        {expandedClients.includes(client.id) && client.subClients && client.subClients.map(subClient => (
                           <TableRow key={`${client.id}-${subClient.id}`} className="bg-gray-50">
                             <TableCell className="pl-12">
                               <div className="flex items-center">
@@ -514,8 +518,7 @@ const ClientManagement = () => {
                           </TableRow>
                         ))}
                         
-                        {/* Empty state when expanded but no sub-clients */}
-                        {expandedClients.includes(client.id) && client.subClients.length === 0 && (
+                        {expandedClients.includes(client.id) && (!client.subClients || client.subClients.length === 0) && (
                           <TableRow className="bg-gray-50">
                             <TableCell colSpan={4} className="text-center py-4">
                               <div className="flex flex-col items-center">
