@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { Calendar, FileText, Search, User, PieChart } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -45,7 +46,16 @@ const Navbar: React.FC = () => {
               <span className="block">{user?.name}</span>
               <span className="block text-xs opacity-75 capitalize">{user?.role}</span>
             </div>
-            <User className="h-6 w-6 p-1 bg-jobGray-light rounded-full" />
+            <Link to="/user-profile" className="hover:opacity-80 transition-opacity">
+              {user?.profileImage ? (
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={user.profileImage} alt={user.name} />
+                  <AvatarFallback className="bg-jobGray-light">{user?.name?.[0]}</AvatarFallback>
+                </Avatar>
+              ) : (
+                <User className="h-6 w-6 p-1 bg-jobGray-light rounded-full" />
+              )}
+            </Link>
             <Button 
               variant="outline" 
               size="sm" 

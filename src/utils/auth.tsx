@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
 
@@ -34,6 +35,7 @@ export interface User {
   businessName?: string;
   role: UserRole;
   status: UserStatus; // Added user status field
+  profileImage?: string; // Added profile image field
   allowedSubClients?: string[]; // IDs of sub-clients this user can book jobs for
   subClients?: Array<{ id: string; name: string; clientName: string }>; // For fetching user's allowed sub-clients
   loginHistory?: LoginHistoryEntry[]; // Added login history
@@ -156,6 +158,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           );
         } else {
           parsedUser.subClients = [];
+        }
+        
+        // Check for profile image in localStorage (demo implementation)
+        const profileImage = localStorage.getItem('userProfileImage');
+        if (profileImage) {
+          parsedUser.profileImage = profileImage;
         }
         
         setUser(parsedUser);
@@ -291,6 +299,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('jobSystemUser');
+    // Do not remove profile image on logout for demo purposes
+    // In a real app, this would be stored on the server
     toast({
       title: "Logged out",
       description: "You have been logged out successfully.",

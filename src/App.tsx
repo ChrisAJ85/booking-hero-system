@@ -15,6 +15,7 @@ import UserManagement from "./pages/UserManagement";
 import ClientManagement from "./pages/ClientManagement";
 import UCIDRequests from "./pages/UCIDRequests";
 import MailmarkData from "./pages/MailmarkData";
+import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Create a query client
@@ -69,6 +70,11 @@ const App = () => {
                 <Route path="/mailmark-data" element={
                   <ProtectedRoute>
                     <MailmarkData />
+                  </ProtectedRoute>
+                } />
+                <Route path="/user-profile" element={
+                  <ProtectedRoute>
+                    <UserProfile />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />
