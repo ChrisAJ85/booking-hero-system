@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -19,7 +18,6 @@ const FileUploadJobForm: React.FC = () => {
     setError(null);
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      // Check file type - only accept CSV, XML, XLS, XLSX
       const validTypes = ['text/csv', 'application/xml', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
       if (!validTypes.includes(selectedFile.type)) {
         setError('Invalid file type. Please upload a CSV, XML, XLS, or XLSX file.');
@@ -38,9 +36,7 @@ const FileUploadJobForm: React.FC = () => {
 
     setIsUploading(true);
     
-    // Simulate processing the file
     setTimeout(() => {
-      // Create random sample data for the job fields
       const mailingHouses = ["Mailing House A", "Mailing House B"];
       const jobTypes = ["Unsorted", "Sorted"];
       const formats = ["Letter", "Large Letter", "Packets"];
@@ -52,19 +48,21 @@ const FileUploadJobForm: React.FC = () => {
       const dataTypes = ["Raw Data", "Sorted Data"];
       const bagLabels = ["White", "Yellow"];
       
-      // Generate random values
       const getRandomItem = (array: string[]) => array[Math.floor(Math.random() * array.length)];
       const getRandomNumber = (max: number) => Math.floor(Math.random() * max) + 1;
       const getRandomDate = () => new Date(Date.now() + getRandomNumber(30) * 24 * 60 * 60 * 1000).toISOString();
       
-      // Store additional metadata as JSON
+      const subClientId = user?.subClients?.[0]?.id || '';
+      const subClientName = user?.subClients?.[0]?.name || '';
+      const clientName = user?.subClients?.[0]?.clientName || '';
+      
       const customFieldsJson = JSON.stringify({
         fileUpload: true,
         fileName: file.name,
         fileType: file.type,
         uploadDate: new Date().toISOString(),
-        customerName: user?.name || "Sample Customer",
-        subClientName: user?.subClients?.[0]?.name || "Sample Subclient",
+        customerName: clientName || "Sample Customer",
+        subClientName: subClientName || "Sample Subclient",
         mailingHouse: getRandomItem(mailingHouses),
         jobName: `Job from ${file.name}`,
         poNumber: `PO-${getRandomNumber(9999)}`,
@@ -107,9 +105,9 @@ const FileUploadJobForm: React.FC = () => {
           uploadedBy: user?.name || 'Unknown',
           uploadedAt: new Date().toISOString(),
         }],
-        subClientId: user?.subClients?.[0]?.id || '',
-        subClientName: user?.subClients?.[0]?.name || '',
-        clientName: user?.role === 'admin' ? '' : user?.name || '',
+        subClientId: subClientId,
+        subClientName: subClientName,
+        clientName: clientName,
       });
 
       setIsUploading(false);
