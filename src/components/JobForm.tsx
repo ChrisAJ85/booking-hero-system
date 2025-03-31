@@ -41,6 +41,7 @@ const JobForm: React.FC = () => {
     poNumber: '',
     fdm: false,
     itemWeight: 0,
+    itemCount: 0,
     jobType: '',
     format: '',
     service: '',
@@ -308,6 +309,7 @@ const JobForm: React.FC = () => {
       poNumber: formData.poNumber,
       fdm: formData.fdm,
       itemWeight: formData.itemWeight,
+      itemCount: formData.itemCount,
       jobType: formData.jobType,
       format: formData.format,
       service: formData.service,
@@ -334,7 +336,7 @@ const JobForm: React.FC = () => {
       status: 'pending',
       collectionDate: collectionDate.toISOString(),
       handoverDate: handoverDate.toISOString(),
-      itemCount: 0,
+      itemCount: formData.itemCount,
       bagCount: 0,
       createdBy: user?.name || 'Unknown',
       files: fileObjects,
@@ -365,6 +367,7 @@ const JobForm: React.FC = () => {
         poNumber: '',
         fdm: false,
         itemWeight: 0,
+        itemCount: 0,
         jobType: '',
         format: '',
         service: '',
@@ -514,7 +517,19 @@ const JobForm: React.FC = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="itemCount">Item Count</Label>
+                <Input
+                  id="itemCount"
+                  name="itemCount"
+                  type="number"
+                  min="0"
+                  value={formData.itemCount}
+                  onChange={handleNumberChange}
+                />
+              </div>
+              
               <div className="space-y-2">
                 <Label>Collection Date*</Label>
                 <Popover>

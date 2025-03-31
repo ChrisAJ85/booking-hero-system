@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Download, FileText, MapPin, Building, Paperclip, Truck, User, Users } from 'lucide-react';
+import { Calendar, Clock, Download, FileText, MapPin, Building, Paperclip, Truck, User, Users, Package } from 'lucide-react';
 import { Job, JobStore, getJobById } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
 import { format } from 'date-fns';
@@ -230,6 +230,21 @@ const JobDetails = () => {
                           </div>
                         </div>
                       </div>
+                      
+                      {job.itemCount > 0 && (
+                        <div className="pt-2 border-t">
+                          <h3 className="text-md font-medium pb-2">Item Details</h3>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <h3 className="text-sm font-medium text-gray-500">Item Count</h3>
+                              <p className="mt-1 flex items-center">
+                                <Package className="h-4 w-4 mr-1 text-jobBlue" />
+                                {job.itemCount.toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       
                       {customFields && (
                         <>

@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building, Calendar, Clock, ExternalLink, FileUp, MapPin } from 'lucide-react';
+import { Building, Calendar, Clock, ExternalLink, FileUp, MapPin, Package } from 'lucide-react';
 import { Job } from '@/utils/data';
 import { format } from 'date-fns';
 
@@ -125,6 +125,13 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
             <span>Handover: {formatDate(job.handoverDate)}</span>
           </div>
         </div>
+        
+        {job.itemCount > 0 && (
+          <div className="mt-2 flex items-center text-xs text-gray-600">
+            <Package className="h-3 w-3 mr-1 text-jobGray" />
+            <span>Items: {job.itemCount.toLocaleString()}</span>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex justify-between border-t pt-3 text-xs text-gray-500">
         <div className="flex items-center">
