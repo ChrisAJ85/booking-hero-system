@@ -61,6 +61,19 @@ export interface UCIDRequest {
   completedBy?: string;
 }
 
+export interface ArtworkSubmission {
+  id: string;
+  title: string;
+  imageUrl: string;
+  comments: string;
+  submittedBy: string;
+  submittedAt: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewedBy?: string;
+  reviewedAt?: string;
+  feedbackComments?: string;
+}
+
 export const generateJobReference = (): string => {
   const prefix = 'JOB';
   const timestamp = Date.now().toString().slice(-6);
@@ -263,6 +276,42 @@ export const mockUCIDRequests: UCIDRequest[] = [
   }
 ];
 
+export const mockArtworkSubmissions: ArtworkSubmission[] = [
+  {
+    id: '1',
+    title: 'Marketing Flyer Design',
+    imageUrl: '/placeholder.svg',
+    comments: 'Please review this flyer design for the upcoming campaign.',
+    submittedBy: 'Regular User',
+    submittedAt: '2023-08-10T09:30:00',
+    status: 'pending'
+  },
+  {
+    id: '2',
+    title: 'Product Catalog Cover',
+    imageUrl: '/placeholder.svg',
+    comments: 'Cover image for Q3 product catalog.',
+    submittedBy: 'Regular User',
+    submittedAt: '2023-08-12T11:45:00',
+    status: 'approved',
+    reviewedBy: 'Admin User',
+    reviewedAt: '2023-08-13T14:20:00',
+    feedbackComments: 'Approved. Looks great!'
+  },
+  {
+    id: '3',
+    title: 'Social Media Banner',
+    imageUrl: '/placeholder.svg',
+    comments: 'Banner for social media posts about the new service.',
+    submittedBy: 'Manager User',
+    submittedAt: '2023-08-14T10:15:00',
+    status: 'rejected',
+    reviewedBy: 'Admin User',
+    reviewedAt: '2023-08-15T16:30:00',
+    feedbackComments: 'Please adjust the colors to match our brand guidelines.'
+  }
+];
+
 export const getJobById = (jobId: string): Job | undefined => {
   return mockJobs.find(job => job.id === jobId);
 };
@@ -393,5 +442,52 @@ export const UCIDRequestStore = {
     
     UCIDRequestStore.saveRequests(updatedRequests);
     return updatedRequest;
+  }
+};
+
+export const ArtworkStore = {
+  getSubmissions: (): ArtworkSubmission[] => {
+    const storedSubmissions = localStorage.getItem('jobSystemArtworkSubmissions');
+    return storedSubmissions ? JSON.parse(storedSubmissions) : mockArtworkSubmissions;
+  },
+  
+  saveSubmissions: (submissions: ArtworkSubmission[]): void => {
+    localStorage.setItem('jobSystemArtworkSubmissions', JSON.stringify(submissions));
+  },
+  
+  addSubmission: (submission: Omit<ArtworkSubmission, 'id' | 'status' | 'submittedAt'>): ArtworkSubmission => {
+    const submissions = ArtworkStore.getSubmissions();
+    const newSubmission: ArtworkSubmission = {
+      ...submission,
+      id: (submissions.length + 1).toString(),
+      status: 'pending',
+      submittedAt: new Date().toISOString(),
+    };
+    
+    const updatedSubmissions = [...submissions, newSubmission];
+    ArtworkStore.saveSubmissions(updatedSubmissions);
+    return newSubmission;
+  },
+  
+  updateSubmission: (submissionId: string, updates: Partial<ArtworkSubmission>): ArtworkSubmission | undefined => {
+    const submissions = ArtworkStore.getSubmissions();
+    let updatedSubmission: ArtworkSubmission | undefined;
+    
+    const updatedSubmissions = submissions.map(submission => {
+      if (submission.id === submissionId) {
+        updatedSubmission = { ...submission, ...updates };
+        return updatedSubmission;
+      }
+      return submission;
+    });
+    
+    ArtworkStore.saveSubmissions(updatedSubmissions);
+    return updatedSubmission;
+  },
+  
+  deleteSubmission: (submissionId: string): void => {
+    const submissions = ArtworkStore.getSubmissions();
+    const filteredSubmissions = submissions.filter(submission => submission.id !== submissionId);
+    ArtworkStore.saveSubmissions(filteredSubmissions);
   }
 };

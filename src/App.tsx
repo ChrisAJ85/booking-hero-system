@@ -17,6 +17,8 @@ import UCIDRequests from "./pages/UCIDRequests";
 import MailmarkData from "./pages/MailmarkData";
 import UserProfile from "./pages/UserProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ArtworkApproval from "./pages/ArtworkApproval";
+import ArtworkSubmission from "./pages/ArtworkSubmission";
 
 // Create a query client
 const queryClient = new QueryClient();
@@ -75,6 +77,16 @@ const App = () => {
                 <Route path="/user-profile" element={
                   <ProtectedRoute>
                     <UserProfile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/artwork-approval" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <ArtworkApproval />
+                  </ProtectedRoute>
+                } />
+                <Route path="/artwork-submission" element={
+                  <ProtectedRoute>
+                    <ArtworkSubmission />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />

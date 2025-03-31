@@ -82,10 +82,16 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           <Clock className="h-3 w-3 mr-1" />
           <span>Created: {formatDate(job.createdAt)}</span>
         </div>
-        <Link to={`/jobs/${job.id}`} className="text-jobGray hover:underline flex items-center gap-1">
-          <span>View details</span>
-          <ExternalLink className="h-3 w-3" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link to={`/jobs/${job.id}`} className="text-jobGray hover:underline flex items-center gap-1">
+            <span>View details</span>
+            <ExternalLink className="h-3 w-3" />
+          </Link>
+          {/* Link to artwork submission for this job */}
+          <Link to="/artwork-submission" className="text-jobGray hover:underline flex items-center gap-1">
+            <span>Submit artwork</span>
+          </Link>
+        </div>
       </CardFooter>
     </Card>
   );
