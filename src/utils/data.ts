@@ -18,7 +18,6 @@ export interface Job {
   subClientName?: string;
   clientName?: string;
   emanifestId?: string;
-  notes?: string;
 }
 
 export interface File {
@@ -121,8 +120,7 @@ export const mockJobs: Job[] = [
     assignedTo: 'Manager User',
     subClientId: 'sc1',
     subClientName: 'Marketing Department',
-    clientName: 'ABC Corporation',
-    notes: 'Delivery completed successfully. All items received.'
+    clientName: 'ABC Corporation'
   },
   {
     id: '2',

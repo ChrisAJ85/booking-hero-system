@@ -1,15 +1,24 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
+import JobForm from '@/components/JobForm';
 import FileUploadJobForm from '@/components/FileUploadJobForm';
 import UCIDRequestForm from '@/components/UCIDRequestForm';
-import JobForm from '@/components/JobForm';
-import JobsTable from '@/components/JobsTable';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Job, JobStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
-import { Calendar, Clock, Eye, File, Users, AlertTriangle } from 'lucide-react';
+import { Calendar, Clock, Eye, File, Users, AlertTriangle, ExternalLink } from 'lucide-react';
+import { 
+  Table, 
+  TableBody, 
+  TableHead, 
+  TableHeader, 
+  TableRow, 
+  TableCell 
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
@@ -22,34 +31,17 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 
 const Dashboard = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [activeTab, setActiveTab] = useState('all');
-  const [activeForm, setActiveForm] = useState<string | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [showMissingEmanifestDialog, setShowMissingEmanifestDialog] = useState(false);
   
   useEffect(() => {
-    if (location.state) {
-      if (location.state.activeForm) {
-        setActiveForm(location.state.activeForm);
-      } else if (location.state.formType) {
-        setActiveForm(location.state.formType);
-      }
-      window.history.replaceState({}, document.title);
-    }
-    
     const loadedJobs = JobStore.getJobs();
     const updatedJobs = loadedJobs.map(job => {
       if (job.id === '1' && !job.emanifestId) {
@@ -65,7 +57,7 @@ const Dashboard = () => {
     });
     JobStore.saveJobs(updatedJobs);
     setJobs(updatedJobs);
-  }, [location]);
+  }, []);
   
   const filteredJobs = () => {
     if (activeTab === 'all') return jobs;
@@ -102,18 +94,35 @@ const Dashboard = () => {
     setShowMissingEmanifestDialog(true);
   };
 
-  const handleCloseForm = () => {
-    setActiveForm(null);
+  const handleShowEmanifest = (job: Job) => {
+    if (job.emanifestId) {
+      toast({
+        title: "eManifest Details",
+        description: `eManifest ID: ${job.emanifestId} for job: ${job.title}`,
+      });
+    } else {
+      toast({
+        title: "Missing eManifest",
+        description: "This job does not have an eManifest ID assigned.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
     <div className="min-h-screen flex">
       <Sidebar />
       <div className="flex-1 flex flex-col">
+        <Navbar />
         <div className="flex-1 bg-jobGray-light p-6">
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+              <div className="space-x-2">
+                <JobForm />
+                <FileUploadJobForm />
+                <UCIDRequestForm />
+              </div>
             </div>
             
             {hasMissingEmanifests && (
@@ -201,15 +210,65 @@ const Dashboard = () => {
                   {jobs.length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No jobs found</p>
-                      <Button
-                        onClick={() => setActiveForm('job')}
-                        className="bg-jobBlue hover:bg-jobBlue-light"
-                      >
-                        Create New Job
-                      </Button>
+                      <JobForm />
                     </div>
                   ) : (
-                    <JobsTable jobs={filteredJobs()} />
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
                 
@@ -217,15 +276,65 @@ const Dashboard = () => {
                   {filteredJobs().length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No pending jobs</p>
-                      <Button
-                        onClick={() => setActiveForm('job')}
-                        className="bg-jobBlue hover:bg-jobBlue-light"
-                      >
-                        Create New Job
-                      </Button>
+                      <JobForm />
                     </div>
                   ) : (
-                    <JobsTable jobs={filteredJobs()} />
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
                 
@@ -233,15 +342,65 @@ const Dashboard = () => {
                   {filteredJobs().length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No in-progress jobs</p>
-                      <Button
-                        onClick={() => setActiveForm('job')}
-                        className="bg-jobBlue hover:bg-jobBlue-light"
-                      >
-                        Create New Job
-                      </Button>
+                      <JobForm />
                     </div>
                   ) : (
-                    <JobsTable jobs={filteredJobs()} />
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
                 
@@ -249,15 +408,65 @@ const Dashboard = () => {
                   {filteredJobs().length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No completed jobs</p>
-                      <Button
-                        onClick={() => setActiveForm('job')}
-                        className="bg-jobBlue hover:bg-jobBlue-light"
-                      >
-                        Create New Job
-                      </Button>
+                      <JobForm />
                     </div>
                   ) : (
-                    <JobsTable jobs={filteredJobs()} />
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
                 
@@ -265,15 +474,65 @@ const Dashboard = () => {
                   {filteredJobs().length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No cancelled jobs</p>
-                      <Button
-                        onClick={() => setActiveForm('job')}
-                        className="bg-jobBlue hover:bg-jobBlue-light"
-                      >
-                        Create New Job
-                      </Button>
+                      <JobForm />
                     </div>
                   ) : (
-                    <JobsTable jobs={filteredJobs()} />
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => navigate(`/jobs/${job.id}`)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  <span>View</span>
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => handleShowEmanifest(job)}
+                                  className="flex items-center gap-1 p-1 h-auto"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>Show</span>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
               </Tabs>
@@ -297,38 +556,8 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <Dialog open={activeForm === 'file'} onOpenChange={(open) => !open && handleCloseForm()}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Book via File</DialogTitle>
-            <DialogDescription>Upload a file to create a new job</DialogDescription>
-          </DialogHeader>
-          <FileUploadJobForm />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={activeForm === 'ucid'} onOpenChange={(open) => !open && handleCloseForm()}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Request New UCID</DialogTitle>
-            <DialogDescription>Fill in the details to request a new UCID</DialogDescription>
-          </DialogHeader>
-          <UCIDRequestForm />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={activeForm === 'job'} onOpenChange={(open) => !open && handleCloseForm()}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Create New Job</DialogTitle>
-            <DialogDescription>Fill in the details to create a new job</DialogDescription>
-          </DialogHeader>
-          <JobForm onSuccess={handleCloseForm} />
-        </DialogContent>
-      </Dialog>
-
       <AlertDialog open={showMissingEmanifestDialog} onOpenChange={setShowMissingEmanifestDialog}>
-        <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <AlertDialogContent className="max-w-3xl">
           <AlertDialogHeader>
             <AlertDialogTitle>Jobs Missing eManifest IDs</AlertDialogTitle>
             <AlertDialogDescription>
@@ -337,7 +566,41 @@ const Dashboard = () => {
           </AlertDialogHeader>
           
           <div className="max-h-[60vh] overflow-auto my-4">
-            <JobsTable jobs={missingEmanifestJobs} />
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Job Title</TableHead>
+                  <TableHead>Reference</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Collection Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>eManifest ID</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {missingEmanifestJobs.map(job => (
+                  <TableRow key={job.id} className="bg-red-50">
+                    <TableCell className="font-medium">{job.title}</TableCell>
+                    <TableCell>{job.reference}</TableCell>
+                    <TableCell>{job.subClientName || job.clientName}</TableCell>
+                    <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                    <TableCell>{getStatusBadge(job.status)}</TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => navigate(`/jobs/${job.id}`)}
+                        className="flex items-center gap-1 p-1 h-auto"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        <span>View</span>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
           
           <AlertDialogFooter>
