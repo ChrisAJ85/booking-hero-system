@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Upload } from 'lucide-react';
@@ -5,7 +6,6 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/utils/auth';
 import { JobStore } from '@/utils/data';
-import { DialogClose } from '@/components/ui/dialog';
 
 const FileUploadJobForm = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -152,24 +152,24 @@ const FileUploadJobForm = () => {
       </div>
       
       <div className="flex justify-end space-x-2 pt-4">
-        <DialogClose asChild>
-          <Button 
-            type="button" 
-            variant="outline"
-          >
-            Cancel
-          </Button>
-        </DialogClose>
-        <DialogClose asChild>
-          <Button 
-            type="submit" 
-            className="bg-jobBlue hover:bg-jobBlue-light"
-            disabled={!file || isUploading}
-            onClick={handleSubmit}
-          >
-            {isUploading ? 'Uploading...' : 'Book Job'}
-          </Button>
-        </DialogClose>
+        <Button 
+          type="button" 
+          variant="outline"
+          onClick={(e) => {
+            e.preventDefault();
+            const closeEvent = new CustomEvent('dialog.close');
+            document.dispatchEvent(closeEvent);
+          }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          type="submit" 
+          className="bg-jobBlue hover:bg-jobBlue-light"
+          disabled={!file || isUploading}
+        >
+          {isUploading ? 'Uploading...' : 'Book Job'}
+        </Button>
       </div>
     </form>
   );

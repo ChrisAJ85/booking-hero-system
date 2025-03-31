@@ -69,6 +69,7 @@ const Sidebar: React.FC = () => {
   ];
 
   const handleFormNavigation = (formType: string) => {
+    // Skip the intermediate screen and go directly to the form
     navigate('/dashboard', { 
       state: { activeForm: formType, openForm: true }
     });
