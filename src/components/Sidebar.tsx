@@ -42,10 +42,10 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <div className="w-64 bg-jobGray-light border-r border-jobGray min-h-screen">
+    <div className="w-64 bg-jobGray-lighter border-r border-jobGray min-h-screen">
       <div className="flex flex-col p-4">
         <div className="py-6 px-4 text-center">
-          <h2 className="text-xl font-bold text-jobBlue">Job System</h2>
+          <h2 className="text-xl font-bold text-jobGray">Job System</h2>
           <div className="mt-2 text-sm text-jobGray-dark">
             <div className="flex items-center justify-center">
               <User className="h-4 w-4 mr-1" />
@@ -65,8 +65,8 @@ const Sidebar: React.FC = () => {
                 className={cn(
                   "flex items-center px-4 py-3 text-sm rounded-md",
                   location.pathname === item.path
-                    ? "bg-jobBlue text-white"
-                    : "text-jobGray-dark hover:bg-jobGray hover:text-jobBlue"
+                    ? "bg-jobGray text-white"
+                    : "text-jobGray-dark hover:bg-gray-200 hover:text-jobGray"
                 )}
               >
                 <span className="mr-3">{item.icon}</span>
@@ -83,11 +83,11 @@ const Sidebar: React.FC = () => {
             </div>
             <ul className="space-y-2">
               <li className="flex items-start">
-                <Calendar className="h-3 w-3 mr-1 mt-1 text-jobBlue" />
+                <Calendar className="h-3 w-3 mr-1 mt-1 text-jobGray" />
                 <span>New job created</span>
               </li>
               <li className="flex items-start">
-                <Calendar className="h-3 w-3 mr-1 mt-1 text-jobBlue" />
+                <Calendar className="h-3 w-3 mr-1 mt-1 text-jobGray" />
                 <span>Document uploaded</span>
               </li>
             </ul>

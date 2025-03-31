@@ -16,7 +16,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
       case 'pending':
         return 'bg-orange-100 text-orange-800 border-orange-300';
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return 'bg-jobGray-light text-jobGray-dark border-jobGray';
       case 'completed':
         return 'bg-green-100 text-green-800 border-green-300';
       case 'cancelled':
@@ -49,7 +49,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         <p className="text-sm line-clamp-2 text-gray-600 mb-4">{job.description}</p>
         
         {job.subClientName && (
-          <div className="mb-3 flex items-center text-sm text-jobBlue-light">
+          <div className="mb-3 flex items-center text-sm text-jobGray">
             <Building className="h-3.5 w-3.5 mr-1" />
             <span>
               {job.subClientName} 
@@ -60,19 +60,19 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
           <div className="flex items-center">
-            <Calendar className="h-3 w-3 mr-1 text-jobBlue" />
+            <Calendar className="h-3 w-3 mr-1 text-jobGray" />
             <span>Collection: {formatDate(job.collectionDate)}</span>
           </div>
           <div className="flex items-center">
-            <Calendar className="h-3 w-3 mr-1 text-jobBlue" />
+            <Calendar className="h-3 w-3 mr-1 text-jobGray" />
             <span>Handover: {formatDate(job.handoverDate)}</span>
           </div>
           <div className="flex items-center">
-            <Paperclip className="h-3 w-3 mr-1 text-jobBlue" />
+            <Paperclip className="h-3 w-3 mr-1 text-jobGray" />
             <span>Items: {job.itemCount} / Bags: {job.bagCount}</span>
           </div>
           <div className="flex items-center">
-            <Users className="h-3 w-3 mr-1 text-jobBlue" />
+            <Users className="h-3 w-3 mr-1 text-jobGray" />
             <span>Assigned: {job.assignedTo || 'Not assigned'}</span>
           </div>
         </div>
@@ -82,7 +82,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           <Clock className="h-3 w-3 mr-1" />
           <span>Created: {formatDate(job.createdAt)}</span>
         </div>
-        <Link to={`/jobs/${job.id}`} className="text-jobBlue hover:underline">
+        <Link to={`/jobs/${job.id}`} className="text-jobGray hover:underline">
           View details →
         </Link>
       </CardFooter>

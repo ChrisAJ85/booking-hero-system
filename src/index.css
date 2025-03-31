@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -36,9 +35,10 @@
     --radius: 0.5rem;
     
     /* Job System Custom Colors */
-    --jobBlue: 210 100% 50%;
-    --jobBlue-light: 210 100% 60%;
-    --jobGray-light: 0 0% 98%;
+    --jobGray: 0 0% 53%;  /* #878787 */
+    --jobGray-light: 0 0% 63%;
+    --jobGray-dark: 0 0% 43%;
+    --jobGray-lighter: 0 0% 98%;
   }
 
   .dark {
@@ -98,18 +98,30 @@
 }
 
 /* Job System Custom Classes */
-.bg-jobBlue {
-  background-color: hsl(var(--jobBlue));
-}
-
-.bg-jobBlue-light {
-  background-color: hsl(var(--jobBlue-light));
+.bg-jobGray {
+  background-color: hsl(var(--jobGray));
 }
 
 .bg-jobGray-light {
   background-color: hsl(var(--jobGray-light));
 }
 
-.text-jobBlue {
-  color: hsl(var(--jobBlue));
+.bg-jobGray-dark {
+  background-color: hsl(var(--jobGray-dark));
+}
+
+.bg-jobGray-lighter {
+  background-color: hsl(var(--jobGray-lighter));
+}
+
+.text-jobGray {
+  color: hsl(var(--jobGray));
+}
+
+.text-jobGray-dark {
+  color: hsl(var(--jobGray-dark));
+}
+
+.text-jobGray-light {
+  color: hsl(var(--jobGray-light));
 }

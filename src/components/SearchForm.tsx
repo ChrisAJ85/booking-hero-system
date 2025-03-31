@@ -47,7 +47,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch }) => {
               </SelectContent>
             </Select>
           </div>
-          <Button type="submit" className="bg-jobBlue hover:bg-jobBlue-light">
+          <Button type="submit" className="bg-jobGray hover:bg-jobGray-light">
             <Search className="h-4 w-4 mr-1" />
             Search
           </Button>
