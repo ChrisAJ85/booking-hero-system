@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
@@ -16,7 +17,8 @@ import {
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
-  DialogTrigger 
+  DialogTrigger,
+  DialogDescription
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,6 +48,7 @@ const ClientManagement = () => {
 
   useEffect(() => {
     const loadedClients = ClientStore.getClients();
+    console.log("Loaded clients:", loadedClients);
     setClientsList(loadedClients);
   }, []);
 
@@ -200,11 +203,13 @@ const ClientManagement = () => {
     console.log("Submitting sub-client for client ID:", clientId);
     
     if (editingSubClient.subClient) {
+      // Updating existing sub-client
       const updatedSubClient = {
         ...editingSubClient.subClient,
         name: subClientFormData.name
       };
       
+      console.log("Updating sub-client:", updatedSubClient);
       const result = ClientStore.updateSubClient(clientId, updatedSubClient);
       
       if (result) {
@@ -234,17 +239,24 @@ const ClientManagement = () => {
         });
       }
     } else {
+      // Adding new sub-client
+      console.log("Creating new sub-client with name:", subClientFormData.name);
       const newSubClient = ClientStore.addSubClient(clientId, {
         name: subClientFormData.name
       });
       
       if (newSubClient) {
+        console.log("New sub-client created:", newSubClient);
+        
         setClientsList(prevClients =>
           prevClients.map(client => {
             if (client.id === clientId) {
+              const updatedSubClients = [...(client.subClients || []), newSubClient];
+              console.log("Updated sub-clients for client:", updatedSubClients);
+              
               return {
                 ...client,
-                subClients: [...(client.subClients || []), newSubClient]
+                subClients: updatedSubClients
               };
             }
             return client;
@@ -260,6 +272,7 @@ const ClientManagement = () => {
           setExpandedClients([...expandedClients, clientId]);
         }
       } else {
+        console.error("Failed to create sub-client");
         toast({
           title: "Error",
           description: "Failed to add sub-client.",

@@ -549,6 +549,7 @@ export const ClientStore = {
     const newClient: Client = {
       ...client,
       id: `client-${Date.now()}`,
+      subClients: client.subClients || []
     };
     
     const updatedClients = [...clients, newClient];
@@ -575,7 +576,10 @@ export const ClientStore = {
     const clients = ClientStore.getClients();
     const clientIndex = clients.findIndex(client => client.id === clientId);
     
-    if (clientIndex === -1) return null;
+    if (clientIndex === -1) {
+      console.error(`Client with ID ${clientId} not found`);
+      return null;
+    }
     
     const newSubClient: SubClient = {
       ...subClient,
@@ -588,6 +592,7 @@ export const ClientStore = {
     }
     
     clients[clientIndex].subClients.push(newSubClient);
+    
     ClientStore.saveClients(clients);
     
     return newSubClient;
@@ -597,15 +602,29 @@ export const ClientStore = {
     const clients = ClientStore.getClients();
     const clientIndex = clients.findIndex(client => client.id === clientId);
     
-    if (clientIndex === -1) return null;
+    if (clientIndex === -1) {
+      console.error(`Client with ID ${clientId} not found`);
+      return null;
+    }
     
-    const subClientIndex = clients[clientIndex].subClients.findIndex(
+    const client = clients[clientIndex];
+    
+    if (!client.subClients) {
+      console.error(`Client with ID ${clientId} has no subClients array`);
+      return null;
+    }
+    
+    const subClientIndex = client.subClients.findIndex(
       sc => sc.id === updatedSubClient.id
     );
     
-    if (subClientIndex === -1) return null;
+    if (subClientIndex === -1) {
+      console.error(`SubClient with ID ${updatedSubClient.id} not found in client ${clientId}`);
+      return null;
+    }
     
     clients[clientIndex].subClients[subClientIndex] = updatedSubClient;
+    
     ClientStore.saveClients(clients);
     
     return updatedSubClient;
@@ -615,13 +634,24 @@ export const ClientStore = {
     const clients = ClientStore.getClients();
     const clientIndex = clients.findIndex(client => client.id === clientId);
     
-    if (clientIndex === -1) return false;
+    if (clientIndex === -1) {
+      console.error(`Client with ID ${clientId} not found`);
+      return false;
+    }
     
-    clients[clientIndex].subClients = clients[clientIndex].subClients.filter(
+    const client = clients[clientIndex];
+    
+    if (!client.subClients) {
+      console.error(`Client with ID ${clientId} has no subClients array`);
+      return false;
+    }
+    
+    clients[clientIndex].subClients = client.subClients.filter(
       sc => sc.id !== subClientId
     );
     
     ClientStore.saveClients(clients);
+    
     return true;
   }
 };
