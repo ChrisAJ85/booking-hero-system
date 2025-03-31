@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
 import JobForm from '@/components/JobForm';
+import FileUploadJobForm from '@/components/FileUploadJobForm';
 import UCIDRequestForm from '@/components/UCIDRequestForm';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -119,6 +120,7 @@ const Dashboard = () => {
               <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
               <div className="space-x-2">
                 <JobForm />
+                <FileUploadJobForm />
                 <UCIDRequestForm />
               </div>
             </div>
