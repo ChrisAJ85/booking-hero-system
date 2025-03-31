@@ -127,7 +127,7 @@ const Dashboard = () => {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">New Job</h2>
-              <JobForm onClose={handleCloseForm} />
+              <JobForm />
               <Button 
                 variant="outline" 
                 onClick={handleCloseForm}
@@ -143,7 +143,7 @@ const Dashboard = () => {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">Book via File</h2>
-              <FileUploadJobForm onClose={handleCloseForm} />
+              <FileUploadJobForm />
               <Button 
                 variant="outline" 
                 onClick={handleCloseForm}
@@ -159,7 +159,7 @@ const Dashboard = () => {
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">Request New UCID</h2>
-              <UCIDRequestForm onClose={handleCloseForm} />
+              <UCIDRequestForm />
               <Button 
                 variant="outline" 
                 onClick={handleCloseForm}
