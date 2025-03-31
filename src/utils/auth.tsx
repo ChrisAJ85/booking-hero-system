@@ -29,16 +29,25 @@ export const users: User[] = [
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  
+  console.log("AuthProvider rendering");
 
   useEffect(() => {
     // Check for saved user in localStorage
     const savedUser = localStorage.getItem('jobSystemUser');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+        console.log("User loaded from localStorage");
+      } catch (e) {
+        console.error("Failed to parse user from localStorage", e);
+        localStorage.removeItem('jobSystemUser');
+      }
     }
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
+    console.log("Login attempt for:", email);
     // In a real app, this would be an API call
     // For demo purposes, we'll use our mock data
     const foundUser = users.find(u => u.email === email);
@@ -84,6 +93,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isAdmin = (): boolean => {
     return user?.role === 'admin';
   };
+
+  console.log("Auth context current user:", user?.name || "none");
 
   return (
     <AuthContext.Provider value={{ user, login, logout, hasPermission, isAdmin }}>

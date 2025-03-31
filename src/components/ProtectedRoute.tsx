@@ -11,16 +11,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   requiredRole = 'user' 
 }) => {
+  console.log("ProtectedRoute component rendering");
   const { user, hasPermission } = useAuth();
 
   if (!user) {
+    console.log("ProtectedRoute: No user, redirecting to login");
     return <Navigate to="/" replace />;
   }
 
   if (!hasPermission(requiredRole)) {
+    console.log("ProtectedRoute: User doesn't have permission, redirecting to dashboard");
     return <Navigate to="/dashboard" replace />;
   }
-
+  
+  console.log("ProtectedRoute: User has permission, rendering children");
   return <>{children}</>;
 };
 

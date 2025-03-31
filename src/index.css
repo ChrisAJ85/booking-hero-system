@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -33,22 +34,11 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Job System Custom Colors */
+    --jobBlue: 210 100% 50%;
+    --jobBlue-light: 210 100% 60%;
+    --jobGray-light: 0 0% 98%;
   }
 
   .dark {
@@ -97,5 +87,29 @@
 
   body {
     @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
   }
+  
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+/* Job System Custom Classes */
+.bg-jobBlue {
+  background-color: hsl(var(--jobBlue));
+}
+
+.bg-jobBlue-light {
+  background-color: hsl(var(--jobBlue-light));
+}
+
+.bg-jobGray-light {
+  background-color: hsl(var(--jobGray-light));
+}
+
+.text-jobBlue {
+  color: hsl(var(--jobBlue));
 }
