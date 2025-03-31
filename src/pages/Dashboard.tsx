@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '@/components/Sidebar';
@@ -576,7 +575,7 @@ const Dashboard = () => {
       </div>
 
       <Dialog open={activeForm === 'file'} onOpenChange={(open) => !open && handleCloseForm()}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Book via File</DialogTitle>
             <DialogDescription>Upload a file to create a new job</DialogDescription>
@@ -586,7 +585,7 @@ const Dashboard = () => {
       </Dialog>
 
       <Dialog open={activeForm === 'ucid'} onOpenChange={(open) => !open && handleCloseForm()}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Request New UCID</DialogTitle>
             <DialogDescription>Fill in the details to request a new UCID</DialogDescription>
@@ -596,7 +595,7 @@ const Dashboard = () => {
       </Dialog>
 
       <AlertDialog open={showMissingEmanifestDialog} onOpenChange={setShowMissingEmanifestDialog}>
-        <AlertDialogContent className="max-w-3xl">
+        <AlertDialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>Jobs Missing eManifest IDs</AlertDialogTitle>
             <AlertDialogDescription>

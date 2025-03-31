@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -124,124 +125,128 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <Label htmlFor="title">Job Title</Label>
-        <Input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter job title"
-          required
-        />
-      </div>
-      
-      <div>
-        <Label htmlFor="reference">Reference</Label>
-        <Input
-          type="text"
-          id="reference"
-          value={reference}
-          onChange={(e) => setReference(e.target.value)}
-          placeholder="Enter reference"
-          required
-        />
-      </div>
-      
-      <div>
-        <Label htmlFor="clientName">Client Name</Label>
-        <Select onValueChange={handleClientChange}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a client" />
-          </SelectTrigger>
-          <SelectContent>
-            {clients.map((client) => (
-              <SelectItem key={client.id} value={client.name}>
-                {client.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <Label htmlFor="isSubClient" className="flex items-center space-x-2">
-          <span>Is Sub Client?</span>
-          <Switch
-            id="isSubClient"
-            checked={isSubClient}
-            onCheckedChange={(checked) => {
-              setIsSubClient(checked);
-              if (!checked) {
-                setSubClientName('');
-              }
-            }}
-          />
-        </Label>
-      </div>
-
-      {isSubClient && (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Grid layout for better space usage */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="subClientName">Sub Client Name</Label>
-          <Select onValueChange={handleSubClientChange} disabled={subClients.length === 0}>
+          <Label htmlFor="title">Job Title</Label>
+          <Input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter job title"
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="reference">Reference</Label>
+          <Input
+            type="text"
+            id="reference"
+            value={reference}
+            onChange={(e) => setReference(e.target.value)}
+            placeholder="Enter reference"
+            required
+          />
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="clientName">Client Name</Label>
+          <Select onValueChange={handleClientChange}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a sub client" />
+              <SelectValue placeholder="Select a client" />
             </SelectTrigger>
             <SelectContent>
-              {subClients.map((subClient) => (
-                <SelectItem key={subClient} value={subClient}>
-                  {subClient}
+              {clients.map((client) => (
+                <SelectItem key={client.id} value={client.name}>
+                  {client.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-      )}
-      
-      <div>
-        <Label>Collection Date</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !collectionDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {collectionDate ? (
-                format(collectionDate, "PPP")
-              ) : (
-                <span>Pick a date</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={collectionDate}
-              onSelect={setCollectionDate}
-              initialFocus
+
+        <div>
+          <div className="flex items-center space-x-2 mb-2">
+            <Label htmlFor="isSubClient">Is Sub Client?</Label>
+            <Switch
+              id="isSubClient"
+              checked={isSubClient}
+              onCheckedChange={(checked) => {
+                setIsSubClient(checked);
+                if (!checked) {
+                  setSubClientName('');
+                }
+              }}
             />
-          </PopoverContent>
-        </Popover>
+          </div>
+
+          {isSubClient && (
+            <Select onValueChange={handleSubClientChange} disabled={subClients.length === 0}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a sub client" />
+              </SelectTrigger>
+              <SelectContent>
+                {subClients.map((subClient) => (
+                  <SelectItem key={subClient} value={subClient}>
+                    {subClient}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </div>
       
-      <div>
-        <Label htmlFor="status">Status</Label>
-        <Select value={status} onValueChange={(value: Job['status']) => setStatus(value)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label>Collection Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !collectionDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {collectionDate ? (
+                  format(collectionDate, "PPP")
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={collectionDate}
+                onSelect={setCollectionDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        
+        <div>
+          <Label htmlFor="status">Status</Label>
+          <Select value={status} onValueChange={(value: Job['status']) => setStatus(value)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       <div>
@@ -251,10 +256,11 @@ const JobForm = ({ onSuccess }: JobFormProps) => {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Enter notes"
+          className="h-20" // Reduce height
         />
       </div>
       
-      <div className="flex justify-end space-x-2 pt-4">
+      <div className="flex justify-end space-x-2 pt-2">
         <Button 
           type="button" 
           variant="outline"

@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from 'react-router-dom';
 import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush, PlusCircle, FileUp, File } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -175,7 +176,7 @@ const Sidebar: React.FC = () => {
       </div>
 
       <Dialog open={showJobForm} onOpenChange={setShowJobForm}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>New Job</DialogTitle>
             <DialogDescription>Enter the details for the new job</DialogDescription>
