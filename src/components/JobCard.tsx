@@ -37,7 +37,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
   // Check if job was created via file upload
   const isFileUpload = () => {
     try {
-      if (job.description.includes('fileUpload')) {
+      if (job.description && job.description.includes('fileUpload')) {
         const parts = job.description.split('\n\n');
         if (parts.length > 1) {
           const jsonStr = parts[parts.length - 1];
@@ -71,7 +71,9 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         <p className="text-xs text-gray-500">Reference: {job.reference}</p>
       </CardHeader>
       <CardContent className="pb-2">
-        <p className="text-sm line-clamp-2 text-gray-600 mb-4">{job.description.split('\n\n')[0]}</p>
+        <p className="text-sm line-clamp-2 text-gray-600 mb-4">
+          {job.description ? job.description.split('\n\n')[0] : ''}
+        </p>
         
         {job.subClientName && (
           <div className="mb-3 flex items-center text-sm text-jobGray">

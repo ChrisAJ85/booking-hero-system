@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -16,6 +15,7 @@ import { toast } from '@/hooks/use-toast';
 const JobDetails = () => {
   const { jobId } = useParams<{ jobId: string }>();
   const [job, setJob] = useState<Job | null>(null);
+  const [loading, setLoading] = useState(true);
   const [statusChanged, setStatusChanged] = useState(false);
   const [customFields, setCustomFields] = useState<any>(null);
   const { user, hasPermission } = useAuth();
@@ -23,33 +23,74 @@ const JobDetails = () => {
   
   useEffect(() => {
     if (jobId) {
-      const foundJob = getJobById(jobId);
+      console.log("Looking for job with ID:", jobId);
+      // Get all jobs and check if any match the ID
+      const allJobs = JobStore.getJobs();
+      console.log("All jobs:", allJobs.map(j => ({ id: j.id, title: j.title })));
+      
+      const foundJob = allJobs.find(j => j.id === jobId);
       if (foundJob) {
+        console.log("Job found:", foundJob);
         setJob(foundJob);
         
         try {
-          const descParts = foundJob.description.split('\n\n');
-          if (descParts.length > 1) {
-            const jsonStr = descParts[descParts.length - 1];
-            const parsedCustomFields = JSON.parse(jsonStr);
-            setCustomFields(parsedCustomFields);
+          if (foundJob.description && foundJob.description.includes('{')) {
+            const descParts = foundJob.description.split('\n\n');
+            if (descParts.length > 1) {
+              const jsonStr = descParts[descParts.length - 1];
+              const parsedCustomFields = JSON.parse(jsonStr);
+              setCustomFields(parsedCustomFields);
+            }
           }
         } catch (e) {
           console.error('Error parsing custom fields:', e);
         }
       } else {
+        console.error("Job not found with ID:", jobId);
         toast({
           title: "Error",
-          description: "Job not found",
+          description: "Job not found. Redirecting to dashboard...",
           variant: "destructive"
         });
-        navigate('/dashboard');
+        // Add a small delay before navigating to allow the toast to be seen
+        setTimeout(() => navigate('/dashboard'), 1500);
       }
+      setLoading(false);
     }
   }, [jobId, navigate]);
   
+  if (loading) {
+    return (
+      <div className="min-h-screen flex">
+        <Sidebar />
+        <div className="flex-1 flex flex-col">
+          <Navbar />
+          <div className="flex-1 bg-jobGray-light p-6 flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jobBlue mx-auto mb-4"></div>
+              <p className="text-lg text-gray-600">Loading job details...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   if (!job) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex">
+        <Sidebar />
+        <div className="flex-1 flex flex-col">
+          <Navbar />
+          <div className="flex-1 bg-jobGray-light p-6 flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-lg text-red-600 mb-4">Job not found</p>
+              <Button onClick={() => navigate('/dashboard')}>Return to Dashboard</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
   
   const formatDate = (dateString: string) => {
@@ -384,14 +425,14 @@ const JobDetails = () => {
                     <CardTitle>Attachments</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {job.files.length === 0 ? (
+                    {job.files && job.files.length === 0 ? (
                       <div className="text-center py-8 text-gray-500">
                         <Paperclip className="h-8 w-8 mx-auto mb-2 opacity-50" />
                         <p>No attachments available</p>
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {job.files.map((file) => (
+                        {job.files && job.files.map((file) => (
                           <div 
                             key={file.id} 
                             className="flex justify-between items-center p-3 bg-gray-50 rounded-md"
