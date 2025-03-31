@@ -5,28 +5,21 @@ import Sidebar from '@/components/Sidebar';
 import { useAuth, User, users, Client, clients, SubClient } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
   Dialog, 
   DialogContent, 
   DialogHeader, 
   DialogTitle, 
   DialogTrigger 
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { UserRole } from '@/utils/auth';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Users, UserPlus, UserCog, UserX, ChevronDown } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
+import UserTable from '@/components/user/UserTable';
+import UserForm from '@/components/user/UserForm';
+
+interface SubClientWithClient extends SubClient {
+  clientName: string;
+}
 
 const UserManagement = () => {
   const { user: currentUser, isAdmin } = useAuth();
@@ -62,6 +55,14 @@ const UserManagement = () => {
       </div>
     );
   }
+
+  // Get all available subclients from all clients
+  const allSubClients: SubClientWithClient[] = clients.flatMap(client => 
+    client.subClients.map(subclient => ({
+      ...subclient,
+      clientName: client.name
+    }))
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -210,14 +211,6 @@ const UserManagement = () => {
     });
   };
 
-  // Get all available subclients from all clients
-  const allSubClients = clients.flatMap(client => 
-    client.subClients.map(subclient => ({
-      ...subclient,
-      clientName: client.name
-    }))
-  );
-
   return (
     <div className="min-h-screen flex">
       <Sidebar />
@@ -238,220 +231,29 @@ const UserManagement = () => {
                   <DialogHeader>
                     <DialogTitle>{editingUser ? 'Edit User' : 'Add New User'}</DialogTitle>
                   </DialogHeader>
-                  <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name*</Label>
-                        <Input
-                          id="firstName"
-                          name="firstName"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name*</Label>
-                        <Input
-                          id="lastName"
-                          name="lastName"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address*</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="mobileNumber">Mobile Number</Label>
-                        <Input
-                          id="mobileNumber"
-                          name="mobileNumber"
-                          value={formData.mobileNumber}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="landlineNumber">Landline Number</Label>
-                        <Input
-                          id="landlineNumber"
-                          name="landlineNumber"
-                          value={formData.landlineNumber}
-                          onChange={handleInputChange}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="businessName">Business Name</Label>
-                      <Input
-                        id="businessName"
-                        name="businessName"
-                        value={formData.businessName}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label>Role</Label>
-                      <Select defaultValue={formData.role} onValueChange={handleRoleChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">User</SelectItem>
-                          <SelectItem value="manager">Manager</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    {formData.role === 'user' && (
-                      <div className="space-y-2">
-                        <Label>Can book jobs for sub-clients</Label>
-                        <div className="border rounded-md p-3 max-h-40 overflow-y-auto">
-                          {allSubClients.length > 0 ? (
-                            <div className="space-y-2">
-                              {allSubClients.map(subclient => (
-                                <div key={subclient.id} className="flex items-start space-x-2">
-                                  <Checkbox 
-                                    id={`subclient-${subclient.id}`}
-                                    checked={formData.allowedSubClients?.includes(subclient.id)}
-                                    onCheckedChange={(checked) => 
-                                      handleSubClientChange(subclient.id, checked === true)
-                                    }
-                                  />
-                                  <Label 
-                                    htmlFor={`subclient-${subclient.id}`}
-                                    className="text-sm font-normal cursor-pointer"
-                                  >
-                                    {subclient.name} <span className="text-xs text-gray-500">({subclient.clientName})</span>
-                                  </Label>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-gray-500">No sub-clients available</p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="flex justify-end space-x-2 pt-4">
-                      <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button type="submit" className="bg-jobBlue hover:bg-jobBlue-light">
-                        {editingUser ? 'Update User' : 'Add User'}
-                      </Button>
-                    </div>
-                  </form>
+                  
+                  <UserForm 
+                    formData={formData}
+                    subClients={allSubClients}
+                    onInputChange={handleInputChange}
+                    onRoleChange={handleRoleChange}
+                    onSubClientChange={handleSubClientChange}
+                    onSubmit={handleSubmit}
+                    onCancel={() => setDialogOpen(false)}
+                    isEditing={!!editingUser}
+                  />
                 </DialogContent>
               </Dialog>
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Business</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Sub-Clients</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {usersList.map(user => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.name}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.businessName || '-'}</TableCell>
-                      <TableCell>
-                        {user.mobileNumber && <div className="text-sm">{user.mobileNumber}</div>}
-                        {user.landlineNumber && <div className="text-sm text-gray-500">{user.landlineNumber}</div>}
-                      </TableCell>
-                      <TableCell className="capitalize">{user.role}</TableCell>
-                      <TableCell>
-                        {user.role === 'user' && user.allowedSubClients && user.allowedSubClients.length > 0 ? (
-                          <div className="text-sm">
-                            {user.allowedSubClients.map(subClientId => {
-                              const subClient = allSubClients.find(sc => sc.id === subClientId);
-                              return subClient ? (
-                                <div key={subClientId} className="mb-1">
-                                  {subClient.name} <span className="text-xs text-gray-500">({subClient.clientName})</span>
-                                </div>
-                              ) : null;
-                            })}
-                          </div>
-                        ) : (
-                          <span className="text-gray-500">-</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handleEditUser(user)}
-                          >
-                            <UserCog className="h-4 w-4" />
-                            <span className="sr-only">Edit</span>
-                          </Button>
-                          
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                className="text-red-500 border-red-200 hover:bg-red-50"
-                                disabled={user.id === currentUser?.id}
-                              >
-                                <UserX className="h-4 w-4" />
-                                <span className="sr-only">Delete</span>
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This will permanently delete the user {user.name}. This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction 
-                                  onClick={() => handleDeleteUser(user.id)}
-                                  className="bg-red-500 hover:bg-red-600"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <UserTable 
+                users={usersList}
+                currentUserId={currentUser?.id}
+                allSubClients={allSubClients}
+                onEditUser={handleEditUser}
+                onDeleteUser={handleDeleteUser}
+              />
             </div>
           </div>
         </div>
