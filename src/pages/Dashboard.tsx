@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
 import JobCard from '@/components/JobCard';
 import JobForm from '@/components/JobForm';
+import UCIDRequestForm from '@/components/UCIDRequestForm';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Job, JobStore } from '@/utils/data';
@@ -36,7 +37,10 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-              <JobForm />
+              <div className="space-x-2">
+                <JobForm />
+                <UCIDRequestForm />
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -45,7 +49,7 @@ const Dashboard = () => {
                   <p className="text-sm text-gray-500">Total Jobs</p>
                   <p className="text-2xl font-bold">{jobs.length}</p>
                 </div>
-                <File className="h-10 w-10 text-jobBlue opacity-20" />
+                <File className="h-10 w-10 text-jobGray opacity-20" />
               </div>
               
               <div className="bg-white p-4 rounded-lg shadow flex justify-between items-center">

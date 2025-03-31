@@ -39,6 +39,19 @@ export interface Document {
   accessRoles: UserRole[];
 }
 
+export interface UCIDRequest {
+  id: string;
+  clientName: string;
+  requestorEmail: string;
+  collectionPointName: string;
+  agencyAccount: boolean;
+  comments: string;
+  status: 'pending' | 'completed';
+  createdAt: string;
+  completedAt?: string;
+  completedBy?: string;
+}
+
 export const generateJobReference = (): string => {
   const prefix = 'JOB';
   const timestamp = Date.now().toString().slice(-6);
@@ -214,6 +227,31 @@ export const mockDocuments: Document[] = [
   }
 ];
 
+export const mockUCIDRequests: UCIDRequest[] = [
+  {
+    id: '1',
+    clientName: 'ABC Corporation',
+    requestorEmail: 'john.doe@example.com',
+    collectionPointName: 'Head Office',
+    agencyAccount: true,
+    comments: 'Need this for the new branch opening next month.',
+    status: 'pending',
+    createdAt: '2023-07-15T10:30:00'
+  },
+  {
+    id: '2',
+    clientName: 'XYZ Industries',
+    requestorEmail: 'sarah.smith@example.com',
+    collectionPointName: 'Warehouse B',
+    agencyAccount: false,
+    comments: 'Urgent request for new project.',
+    status: 'completed',
+    createdAt: '2023-08-05T14:45:00',
+    completedAt: '2023-08-07T09:20:00',
+    completedBy: 'Admin User'
+  }
+];
+
 export const getJobById = (jobId: string): Job | undefined => {
   return mockJobs.find(job => job.id === jobId);
 };
@@ -298,5 +336,51 @@ export const DocumentStore = {
     const documents = DocumentStore.getDocuments();
     const filteredDocuments = documents.filter(doc => doc.id !== documentId);
     DocumentStore.saveDocuments(filteredDocuments);
+  }
+};
+
+export const UCIDRequestStore = {
+  getRequests: (): UCIDRequest[] => {
+    const storedRequests = localStorage.getItem('jobSystemUCIDRequests');
+    return storedRequests ? JSON.parse(storedRequests) : mockUCIDRequests;
+  },
+  
+  saveRequests: (requests: UCIDRequest[]): void => {
+    localStorage.setItem('jobSystemUCIDRequests', JSON.stringify(requests));
+  },
+  
+  addRequest: (request: Omit<UCIDRequest, 'id' | 'status' | 'createdAt'>): UCIDRequest => {
+    const requests = UCIDRequestStore.getRequests();
+    const newRequest: UCIDRequest = {
+      ...request,
+      id: (requests.length + 1).toString(),
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+    
+    const updatedRequests = [...requests, newRequest];
+    UCIDRequestStore.saveRequests(updatedRequests);
+    return newRequest;
+  },
+  
+  markAsComplete: (requestId: string, completedBy: string): UCIDRequest | undefined => {
+    const requests = UCIDRequestStore.getRequests();
+    let updatedRequest: UCIDRequest | undefined;
+    
+    const updatedRequests = requests.map(req => {
+      if (req.id === requestId && req.status === 'pending') {
+        updatedRequest = {
+          ...req,
+          status: 'completed',
+          completedAt: new Date().toISOString(),
+          completedBy
+        };
+        return updatedRequest;
+      }
+      return req;
+    });
+    
+    UCIDRequestStore.saveRequests(updatedRequests);
+    return updatedRequest;
   }
 };
