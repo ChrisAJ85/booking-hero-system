@@ -288,7 +288,10 @@ const JobForm: React.FC = () => {
       return;
     }
 
+    const selectedClient = clients.find(c => c.id === formData.clientId);
     const selectedSubClient = subClients.find(sc => sc.id === formData.subClientId);
+    
+    console.log("Selected client:", selectedClient);
     console.log("Selected subclient:", selectedSubClient);
 
     const fileObjects = dataFiles.map((file, index) => ({
@@ -327,7 +330,7 @@ const JobForm: React.FC = () => {
 
     const newJob = JobStore.addJob({
       title: formData.title,
-      description: `${formData.description}\n\n${customFieldsJson}`,
+      description: `${formData.description || ''}\n\n${customFieldsJson}`,
       status: 'pending',
       collectionDate: collectionDate.toISOString(),
       handoverDate: handoverDate.toISOString(),
@@ -337,8 +340,10 @@ const JobForm: React.FC = () => {
       files: fileObjects,
       subClientId: formData.subClientId,
       subClientName: selectedSubClient?.name || '',
-      clientName: selectedSubClient?.clientName || '',
+      clientName: selectedClient?.name || selectedSubClient?.clientName || '',
     });
+
+    console.log("Job created successfully:", newJob);
 
     toast({
       title: "Job Created",

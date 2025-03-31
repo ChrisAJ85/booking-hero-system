@@ -390,6 +390,8 @@ export const JobStore = {
       createdAt: new Date().toISOString(),
     };
     
+    console.log("Adding new job:", newJob);
+    
     const updatedJobs = [...jobs, newJob];
     JobStore.saveJobs(updatedJobs);
     return newJob;
@@ -542,6 +544,22 @@ export const ClientStore = {
   
   saveClients: (clients: Client[]): void => {
     localStorage.setItem('jobSystemClients', JSON.stringify(clients));
+  },
+  
+  getClientById: (clientId: string): Client | undefined => {
+    const clients = ClientStore.getClients();
+    return clients.find(client => client.id === clientId);
+  },
+  
+  getSubClientById: (subClientId: string): {subClient: SubClient, client: Client} | undefined => {
+    const clients = ClientStore.getClients();
+    for (const client of clients) {
+      const subClient = client.subClients.find(sc => sc.id === subClientId);
+      if (subClient) {
+        return { subClient, client };
+      }
+    }
+    return undefined;
   },
   
   addClient: (client: Omit<Client, 'id'>): Client => {
