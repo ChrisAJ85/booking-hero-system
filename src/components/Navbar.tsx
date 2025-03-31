@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
-import { Calendar, FileText, Search, User } from 'lucide-react';
+import { Calendar, FileText, Search, User, PieChart } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -33,6 +33,11 @@ const Navbar: React.FC = () => {
           <Link to="/search" className="flex items-center hover:text-jobRed">
             <Search className="mr-1 h-4 w-4" />
             <span>Search</span>
+          </Link>
+          
+          <Link to="/mailmark-data" className="flex items-center hover:text-jobRed">
+            <PieChart className="mr-1 h-4 w-4" />
+            <span>Mailmark</span>
           </Link>
           
           <div className="flex items-center space-x-2">

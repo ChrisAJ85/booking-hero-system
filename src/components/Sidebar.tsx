@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus } from 'lucide-react';
+import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/utils/auth';
 
@@ -25,6 +25,12 @@ const Sidebar: React.FC = () => {
       name: 'Search Jobs',
       icon: <Search className="h-5 w-5" />,
       path: '/search',
+      allowed: true
+    },
+    {
+      name: 'Mailmark Direct Data',
+      icon: <PieChart className="h-5 w-5" />,
+      path: '/mailmark-data',
       allowed: true
     },
     {
