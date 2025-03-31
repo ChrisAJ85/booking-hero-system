@@ -303,7 +303,7 @@ const JobDetails = () => {
                     <div className="space-y-4">
                       <div>
                         <h3 className="text-sm font-medium text-gray-500">Description</h3>
-                        <p className="mt-1">{getCleanDescription()}</p>
+                        <p className="mt-1 bg-jobField rounded p-2">{getCleanDescription()}</p>
                       </div>
                       
                       <div className="pt-2 border-t">
@@ -312,8 +312,8 @@ const JobDetails = () => {
                           {job?.clientName && (
                             <div>
                               <h3 className="text-sm font-medium text-gray-500">Client</h3>
-                              <p className="mt-1 flex items-center">
-                                <Building className="h-4 w-4 mr-1 text-jobBlue" />
+                              <p className="job-field">
+                                <Building className="job-field-icon h-4 w-4" />
                                 {job.clientName}
                               </p>
                             </div>
@@ -321,8 +321,8 @@ const JobDetails = () => {
                           {job?.subClientName && (
                             <div>
                               <h3 className="text-sm font-medium text-gray-500">Sub-Client</h3>
-                              <p className="mt-1 flex items-center">
-                                <Building className="h-4 w-4 mr-1 text-jobBlue" />
+                              <p className="job-field">
+                                <Building className="job-field-icon h-4 w-4" />
                                 {job.subClientName}
                               </p>
                             </div>
@@ -335,15 +335,15 @@ const JobDetails = () => {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <h3 className="text-sm font-medium text-gray-500">Collection Date</h3>
-                            <p className="mt-1 flex items-center">
-                              <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                            <p className="job-field">
+                              <Calendar className="job-field-icon h-4 w-4" />
                               {formatDate(job?.collectionDate || '')}
                             </p>
                           </div>
                           <div>
                             <h3 className="text-sm font-medium text-gray-500">Handover Date</h3>
-                            <p className="mt-1 flex items-center">
-                              <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                            <p className="job-field">
+                              <Calendar className="job-field-icon h-4 w-4" />
                               {formatDate(job?.handoverDate || '')}
                             </p>
                           </div>
@@ -356,8 +356,8 @@ const JobDetails = () => {
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <h3 className="text-sm font-medium text-gray-500">Item Count</h3>
-                              <p className="mt-1 flex items-center">
-                                <Package className="h-4 w-4 mr-1 text-jobBlue" />
+                              <p className="job-field">
+                                <Package className="job-field-icon h-4 w-4" />
                                 {job.itemCount.toLocaleString()}
                               </p>
                             </div>
@@ -373,31 +373,31 @@ const JobDetails = () => {
                               {customFields.customerName && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Customer Name</h3>
-                                  <p className="mt-1">{customFields.customerName}</p>
+                                  <p className="job-field">{customFields.customerName}</p>
                                 </div>
                               )}
                               {customFields.mailingHouse && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Mailing House</h3>
-                                  <p className="mt-1">{customFields.mailingHouse}</p>
+                                  <p className="job-field">{customFields.mailingHouse}</p>
                                 </div>
                               )}
                               {customFields.jobName && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Job Name</h3>
-                                  <p className="mt-1">{customFields.jobName}</p>
+                                  <p className="job-field">{customFields.jobName}</p>
                                 </div>
                               )}
                               {customFields.poNumber && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">PO Number</h3>
-                                  <p className="mt-1">{customFields.poNumber}</p>
+                                  <p className="job-field">{customFields.poNumber}</p>
                                 </div>
                               )}
                               {customFields.fdm && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">FDM</h3>
-                                  <p className="mt-1">Yes</p>
+                                  <p className="job-field">Yes</p>
                                 </div>
                               )}
                             </div>
@@ -409,43 +409,43 @@ const JobDetails = () => {
                               {customFields.itemWeight > 0 && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Item Weight</h3>
-                                  <p className="mt-1">{customFields.itemWeight}g</p>
+                                  <p className="job-field">{customFields.itemWeight}g</p>
                                 </div>
                               )}
                               {customFields.jobType && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Job Type</h3>
-                                  <p className="mt-1">{customFields.jobType}</p>
+                                  <p className="job-field">{customFields.jobType}</p>
                                 </div>
                               )}
                               {customFields.format && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Format</h3>
-                                  <p className="mt-1">{customFields.format}</p>
+                                  <p className="job-field">{customFields.format}</p>
                                 </div>
                               )}
                               {customFields.service && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Service</h3>
-                                  <p className="mt-1">{customFields.service}</p>
+                                  <p className="job-field">{customFields.service}</p>
                                 </div>
                               )}
                               {customFields.sortation && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Sortation</h3>
-                                  <p className="mt-1">{customFields.sortation}</p>
+                                  <p className="job-field">{customFields.sortation}</p>
                                 </div>
                               )}
                               {customFields.mailType && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Mail Type</h3>
-                                  <p className="mt-1">{customFields.mailType}</p>
+                                  <p className="job-field">{customFields.mailType}</p>
                                 </div>
                               )}
                               {customFields.presentation && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Presentation</h3>
-                                  <p className="mt-1">{customFields.presentation}</p>
+                                  <p className="job-field">{customFields.presentation}</p>
                                 </div>
                               )}
                             </div>
@@ -457,13 +457,13 @@ const JobDetails = () => {
                               {customFields.bureauService && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Label</h3>
-                                  <p className="mt-1">{customFields.bureauService}</p>
+                                  <p className="job-field">{customFields.bureauService}</p>
                                 </div>
                               )}
                               {customFields.dataType && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Data</h3>
-                                  <p className="mt-1">{customFields.dataType}</p>
+                                  <p className="job-field">{customFields.dataType}</p>
                                 </div>
                               )}
                             </div>
@@ -475,8 +475,8 @@ const JobDetails = () => {
                               {customFields.collectionAddress && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Collection Address</h3>
-                                  <p className="mt-1 flex items-start">
-                                    <MapPin className="h-4 w-4 mr-1 mt-1 text-jobBlue" />
+                                  <p className="job-field">
+                                    <MapPin className="job-field-icon h-4 w-4" />
                                     <span className="whitespace-pre-line">{customFields.collectionAddress}</span>
                                   </p>
                                 </div>
@@ -484,8 +484,8 @@ const JobDetails = () => {
                               {customFields.handoverAddress && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Handover Address</h3>
-                                  <p className="mt-1 flex items-start">
-                                    <MapPin className="h-4 w-4 mr-1 mt-1 text-jobBlue" />
+                                  <p className="job-field">
+                                    <MapPin className="job-field-icon h-4 w-4" />
                                     <span className="whitespace-pre-line">{customFields.handoverAddress}</span>
                                   </p>
                                 </div>
@@ -499,8 +499,8 @@ const JobDetails = () => {
                               {customFields.vehicleType && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Vehicle Type</h3>
-                                  <p className="mt-1 flex items-center">
-                                    <Truck className="h-4 w-4 mr-1 text-jobBlue" />
+                                  <p className="job-field">
+                                    <Truck className="job-field-icon h-4 w-4" />
                                     {customFields.vehicleType}
                                   </p>
                                 </div>
@@ -509,7 +509,7 @@ const JobDetails = () => {
                             {customFields.deliveryInstructions && (
                               <div className="mt-3">
                                 <h3 className="text-sm font-medium text-gray-500">Delivery Instructions</h3>
-                                <p className="mt-1 whitespace-pre-line">{customFields.deliveryInstructions}</p>
+                                <p className="job-field whitespace-pre-line">{customFields.deliveryInstructions}</p>
                               </div>
                             )}
                           </div>
@@ -520,8 +520,8 @@ const JobDetails = () => {
                               {customFields.productionStartDate && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Production Start</h3>
-                                  <p className="mt-1 flex items-center">
-                                    <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                                  <p className="job-field">
+                                    <Calendar className="job-field-icon h-4 w-4" />
                                     {formatDate(customFields.productionStartDate)}
                                   </p>
                                 </div>
@@ -529,8 +529,8 @@ const JobDetails = () => {
                               {customFields.productionEndDate && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Production End</h3>
-                                  <p className="mt-1 flex items-center">
-                                    <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                                  <p className="job-field">
+                                    <Calendar className="job-field-icon h-4 w-4" />
                                     {formatDate(customFields.productionEndDate)}
                                   </p>
                                 </div>
@@ -538,8 +538,8 @@ const JobDetails = () => {
                               {customFields.consumablesRequiredDate && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Required By</h3>
-                                  <p className="mt-1 flex items-center">
-                                    <Calendar className="h-4 w-4 mr-1 text-jobBlue" />
+                                  <p className="job-field">
+                                    <Calendar className="job-field-icon h-4 w-4" />
                                     {formatDate(customFields.consumablesRequiredDate)}
                                   </p>
                                 </div>
@@ -547,7 +547,7 @@ const JobDetails = () => {
                               {customFields.bagLabels && (
                                 <div>
                                   <h3 className="text-sm font-medium text-gray-500">Bag Labels</h3>
-                                  <p className="mt-1">{customFields.bagLabels}</p>
+                                  <p className="job-field">{customFields.bagLabels}</p>
                                 </div>
                               )}
                             </div>
@@ -557,25 +557,25 @@ const JobDetails = () => {
                                 <h3 className="text-sm font-medium text-gray-500">Quantities</h3>
                                 <div className="grid grid-cols-4 gap-2 mt-1">
                                   {customFields.trays > 0 && (
-                                    <div className="bg-gray-50 p-2 rounded text-center">
+                                    <div className="bg-jobField p-2 rounded text-center">
                                       <p className="text-xs text-gray-500">Trays</p>
                                       <p className="font-medium">{customFields.trays}</p>
                                     </div>
                                   )}
                                   {customFields.magnums > 0 && (
-                                    <div className="bg-gray-50 p-2 rounded text-center">
+                                    <div className="bg-jobField p-2 rounded text-center">
                                       <p className="text-xs text-gray-500">Magnums</p>
                                       <p className="font-medium">{customFields.magnums}</p>
                                     </div>
                                   )}
                                   {customFields.pallets > 0 && (
-                                    <div className="bg-gray-50 p-2 rounded text-center">
+                                    <div className="bg-jobField p-2 rounded text-center">
                                       <p className="text-xs text-gray-500">Pallets</p>
                                       <p className="font-medium">{customFields.pallets}</p>
                                     </div>
                                   )}
                                   {customFields.yorks > 0 && (
-                                    <div className="bg-gray-50 p-2 rounded text-center">
+                                    <div className="bg-jobField p-2 rounded text-center">
                                       <p className="text-xs text-gray-500">Yorks</p>
                                       <p className="font-medium">{customFields.yorks}</p>
                                     </div>
@@ -587,7 +587,7 @@ const JobDetails = () => {
                           
                           <div className="pt-2 border-t">
                             <h3 className="text-md font-medium pb-2">Additional Information</h3>
-                            <p className="mt-1 whitespace-pre-line">{customFields.additionalInfo}</p>
+                            <p className="job-field whitespace-pre-line">{customFields.additionalInfo}</p>
                           </div>
                         </>
                       )}
@@ -610,7 +610,7 @@ const JobDetails = () => {
                         {job?.files && job.files.map((file) => (
                           <div 
                             key={file.id} 
-                            className="flex justify-between items-center p-3 bg-gray-50 rounded-md"
+                            className="flex justify-between items-center p-3 bg-jobField rounded-md"
                           >
                             <div className="flex items-center space-x-3">
                               <FileText className="h-6 w-6 text-jobBlue" />
@@ -651,24 +651,24 @@ const JobDetails = () => {
                   <CardContent className="space-y-4">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Created By</h3>
-                      <p className="mt-1 flex items-center">
-                        <User className="h-4 w-4 mr-1 text-jobBlue" />
+                      <p className="job-field">
+                        <User className="job-field-icon h-4 w-4" />
                         {job?.createdBy}
                       </p>
                     </div>
                     
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Created Date</h3>
-                      <p className="mt-1 flex items-center">
-                        <Clock className="h-4 w-4 mr-1 text-jobBlue" />
+                      <p className="job-field">
+                        <Clock className="job-field-icon h-4 w-4" />
                         {formatDate(job?.createdAt || '')}
                       </p>
                     </div>
                     
                     <div>
                       <h3 className="text-sm font-medium text-gray-500">Assigned To</h3>
-                      <p className="mt-1 flex items-center">
-                        <Users className="h-4 w-4 mr-1 text-jobBlue" />
+                      <p className="job-field">
+                        <Users className="job-field-icon h-4 w-4" />
                         {job?.assignedTo || 'Not assigned'}
                       </p>
                     </div>
@@ -676,8 +676,8 @@ const JobDetails = () => {
                     {job?.emanifestId && (
                       <div>
                         <h3 className="text-sm font-medium text-gray-500">E-Manifest ID</h3>
-                        <p className="mt-1 flex items-center">
-                          <FileText className="h-4 w-4 mr-1 text-jobBlue" />
+                        <p className="job-field">
+                          <FileText className="job-field-icon h-4 w-4" />
                           {job.emanifestId}
                         </p>
                       </div>
