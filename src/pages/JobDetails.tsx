@@ -239,7 +239,7 @@ const JobDetails = () => {
                   Back to Dashboard
                 </Button>
                 
-                {hasPermission('manager') && job?.status !== 'cancelled' && (
+                {job?.status !== 'cancelled' && (
                   <>
                     <Button 
                       variant="outline"
