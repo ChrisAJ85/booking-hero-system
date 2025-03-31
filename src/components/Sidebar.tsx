@@ -90,9 +90,13 @@ const Sidebar: React.FC = () => {
         <div className="mb-6 flex flex-col space-y-2 px-2">
           <Button 
             className="w-full flex items-center justify-start bg-jobRed hover:bg-jobRed/90"
-            onClick={() => {
-              // Using window.location to force a refresh with the query parameter
-              window.location.href = '/dashboard?form=job';
+            onClick={(e) => {
+              e.preventDefault();
+              // Create the URL with the right query parameter
+              const url = new URL('/dashboard', window.location.origin);
+              url.searchParams.set('form', 'job');
+              // Navigate to the URL
+              window.location.href = url.toString();
             }}
           >
             <PlusCircle className="h-4 w-4 mr-2" />
@@ -102,8 +106,11 @@ const Sidebar: React.FC = () => {
           <Button 
             variant="outline" 
             className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed"
-            onClick={() => {
-              window.location.href = '/dashboard?form=file';
+            onClick={(e) => {
+              e.preventDefault();
+              const url = new URL('/dashboard', window.location.origin);
+              url.searchParams.set('form', 'file');
+              window.location.href = url.toString();
             }}
           >
             <FileUp className="h-4 w-4 mr-2" />
@@ -113,8 +120,11 @@ const Sidebar: React.FC = () => {
           <Button 
             variant="outline" 
             className="w-full flex items-center justify-start text-jobGray-dark border-jobGray-dark hover:bg-jobGray-lighter hover:text-jobRed"
-            onClick={() => {
-              window.location.href = '/dashboard?form=ucid';
+            onClick={(e) => {
+              e.preventDefault();
+              const url = new URL('/dashboard', window.location.origin);
+              url.searchParams.set('form', 'ucid');
+              window.location.href = url.toString();
             }}
           >
             <File className="h-4 w-4 mr-2" />
