@@ -17,6 +17,11 @@ interface SubClientWithClient {
   clientName: string;
 }
 
+interface Client {
+  id: string;
+  name: string;
+}
+
 interface FormData {
   firstName: string;
   lastName: string;
@@ -32,9 +37,11 @@ interface FormData {
 interface UserFormProps {
   formData: FormData;
   subClients: SubClientWithClient[];
+  clients?: Client[];
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onRoleChange: (value: string) => void;
   onSubClientChange: (subClientId: string, isChecked: boolean) => void;
+  onAddNewSubClient?: (name: string, clientId: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   isEditing: boolean;
@@ -43,9 +50,11 @@ interface UserFormProps {
 const UserForm = ({
   formData,
   subClients,
+  clients = [],
   onInputChange,
   onRoleChange,
   onSubClientChange,
+  onAddNewSubClient,
   onSubmit,
   onCancel,
   isEditing
@@ -195,11 +204,12 @@ const UserForm = ({
       
       {formData.role === 'user' && (
         <div className="space-y-2">
-          <label className="text-sm font-medium">Allowed Sub-Clients</label>
           <SubClientSelector
             subClients={subClients}
             selectedSubClients={formData.allowedSubClients}
             onChange={onSubClientChange}
+            onAddNewSubClient={onAddNewSubClient}
+            clients={clients}
           />
         </div>
       )}

@@ -1,8 +1,7 @@
-
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
-import { useAuth, User, users, Client, clients, SubClient, UserStatus } from '@/utils/auth';
+import { useAuth, User, users, UserStatus } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { 
   Dialog, 
@@ -16,9 +15,12 @@ import { UserRole } from '@/utils/auth';
 import { UserPlus } from 'lucide-react';
 import UserTable from '@/components/user/UserTable';
 import UserForm from '@/components/user/UserForm';
+import { ClientStore } from '@/utils/data';
 
-interface SubClientWithClient extends SubClient {
+interface SubClientWithClient {
   clientName: string;
+  id: string;
+  name: string;
 }
 
 const UserManagement = () => {
@@ -57,8 +59,9 @@ const UserManagement = () => {
     );
   }
 
-  // Get all available subclients from all clients
-  const allSubClients: SubClientWithClient[] = clients.flatMap(client => 
+  const clientsList = ClientStore.getClients();
+  
+  const allSubClients: SubClientWithClient[] = clientsList.flatMap(client => 
     client.subClients.map(subclient => ({
       ...subclient,
       clientName: client.name
@@ -90,6 +93,30 @@ const UserManagement = () => {
       setFormData({
         ...formData,
         allowedSubClients: (formData.allowedSubClients || []).filter(id => id !== subClientId)
+      });
+    }
+  };
+
+  const handleAddNewSubClient = (name: string, clientId: string) => {
+    console.log("Adding new sub-client:", name, "for client ID:", clientId);
+    
+    const newSubClient = ClientStore.addSubClient(clientId, { name });
+    
+    if (newSubClient) {
+      setFormData({
+        ...formData,
+        allowedSubClients: [...formData.allowedSubClients, newSubClient.id]
+      });
+      
+      toast({
+        title: "Sub-Client Added",
+        description: "New sub-client has been created and added to selected sub-clients."
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to add new sub-client.",
+        variant: "destructive"
       });
     }
   };
@@ -146,7 +173,6 @@ const UserManagement = () => {
     let updatedUsers: User[];
     
     if (editingUser) {
-      // Edit existing user
       updatedUsers = usersList.map(u => 
         u.id === editingUser.id ? { 
           ...u, 
@@ -168,7 +194,6 @@ const UserManagement = () => {
         description: "User has been updated successfully."
       });
     } else {
-      // Add new user
       const newUser: User = {
         id: `${usersList.length + 1}`,
         firstName: formData.firstName,
@@ -197,7 +222,6 @@ const UserManagement = () => {
   };
 
   const handleDeleteUser = (userId: string) => {
-    // Prevent deleting yourself
     if (userId === currentUser?.id) {
       toast({
         title: "Cannot Delete",
@@ -217,7 +241,6 @@ const UserManagement = () => {
   };
 
   const handleToggleStatus = (userId: string, newStatus: UserStatus) => {
-    // Prevent suspending yourself
     if (userId === currentUser?.id) {
       toast({
         title: "Cannot Suspend",
@@ -263,9 +286,11 @@ const UserManagement = () => {
                   <UserForm 
                     formData={formData}
                     subClients={allSubClients}
+                    clients={clientsList}
                     onInputChange={handleInputChange}
                     onRoleChange={handleRoleChange}
                     onSubClientChange={handleSubClientChange}
+                    onAddNewSubClient={handleAddNewSubClient}
                     onSubmit={handleSubmit}
                     onCancel={() => setDialogOpen(false)}
                     isEditing={!!editingUser}
