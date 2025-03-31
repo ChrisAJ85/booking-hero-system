@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { UCIDRequestStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
@@ -76,7 +75,6 @@ const UCIDRequestForm = () => {
     }
   });
   
-  // Listen for changes to the request type
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'type') {
@@ -88,12 +86,10 @@ const UCIDRequestForm = () => {
   
   const onSubmit = (data: UCIDRequestFormData) => {
     try {
-      // Add the request to the store
       UCIDRequestStore.addRequest({
         type: data.type,
         clientName: data.clientName,
         requestorEmail: data.requestorEmail,
-        // Conditionally include fields based on request type
         ...(data.type === 'UCID' && {
           collectionPointName: data.collectionPointName,
           agencyAccount: data.agencyAccount === 'yes',
@@ -129,7 +125,7 @@ const UCIDRequestForm = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-jobRed hover:bg-jobRed-light">
+        <Button id="ucid-request-form-trigger" className="hidden">
           Request New UCID/SCID
         </Button>
       </DialogTrigger>
@@ -463,4 +459,3 @@ const UCIDRequestForm = () => {
 };
 
 export default UCIDRequestForm;
-

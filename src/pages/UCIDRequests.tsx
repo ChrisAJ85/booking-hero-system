@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
@@ -5,7 +6,6 @@ import { UCIDRequest, UCIDRequestStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import UCIDRequestForm from '@/components/UCIDRequestForm';
 import { 
   Table, 
   TableBody, 
@@ -78,7 +78,7 @@ const UCIDRequests = () => {
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold text-gray-800">UCID & SCID Requests</h1>
-              <UCIDRequestForm />
+              {/* Remove the UCIDRequestForm button from here */}
             </div>
             
             <div className="bg-white p-6 rounded-lg shadow-sm">

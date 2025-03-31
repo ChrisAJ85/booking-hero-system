@@ -6,6 +6,7 @@ import { useAuth } from '@/utils/auth';
 import { Button } from './ui/button';
 import JobForm from './JobForm';
 import FileUploadJobForm from './FileUploadJobForm';
+import UCIDRequestForm from './UCIDRequestForm';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
@@ -106,6 +107,22 @@ const Sidebar: React.FC = () => {
             </div>
           </Button>
           <FileUploadJobForm />
+          
+          {isAdmin() && (
+            <>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start p-0 h-auto font-normal hover:bg-gray-200 hover:text-jobRed"
+                onClick={() => document.getElementById('ucid-request-form-trigger')?.click()}
+              >
+                <div className="flex items-center px-4 py-3 text-sm rounded-md text-jobGray-dark">
+                  <span className="mr-3"><BookPlus className="h-5 w-5" /></span>
+                  Request UCID/SCID
+                </div>
+              </Button>
+              <UCIDRequestForm />
+            </>
+          )}
           
           {navItems
             .filter(item => item.allowed)
