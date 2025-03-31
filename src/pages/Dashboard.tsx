@@ -35,6 +35,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 const Dashboard = () => {
@@ -125,54 +126,6 @@ const Dashboard = () => {
 
   const handleCloseForm = () => {
     setActiveForm(null);
-  };
-
-  const handleJobCreated = () => {
-    setActiveForm(null);
-    const loadedJobs = JobStore.getJobs();
-    setJobs(loadedJobs);
-  };
-
-  const renderActiveForm = () => {
-    if (!activeForm) return null;
-    
-    switch (activeForm) {
-      case 'job':
-        return (
-          <Dialog open={true} onOpenChange={(open) => !open && handleCloseForm()}>
-            <DialogContent className="max-w-3xl">
-              <DialogHeader>
-                <DialogTitle>New Job</DialogTitle>
-              </DialogHeader>
-              <JobForm />
-            </DialogContent>
-          </Dialog>
-        );
-      case 'file':
-        return (
-          <Dialog open={true} onOpenChange={(open) => !open && handleCloseForm()}>
-            <DialogContent className="max-w-3xl">
-              <DialogHeader>
-                <DialogTitle>Book via File</DialogTitle>
-              </DialogHeader>
-              <FileUploadJobForm />
-            </DialogContent>
-          </Dialog>
-        );
-      case 'ucid':
-        return (
-          <Dialog open={true} onOpenChange={(open) => !open && handleCloseForm()}>
-            <DialogContent className="max-w-3xl">
-              <DialogHeader>
-                <DialogTitle>Request New UCID</DialogTitle>
-              </DialogHeader>
-              <UCIDRequestForm />
-            </DialogContent>
-          </Dialog>
-        );
-      default:
-        return null;
-    }
   };
 
   return (
@@ -270,7 +223,12 @@ const Dashboard = () => {
                   {jobs.length === 0 ? (
                     <div className="text-center py-10">
                       <p className="text-gray-500 mb-4">No jobs found</p>
-                      <JobForm />
+                      <Button
+                        onClick={() => setActiveForm('job')}
+                        className="bg-jobBlue hover:bg-jobBlue-light"
+                      >
+                        Create New Job
+                      </Button>
                     </div>
                   ) : (
                     <Table>
@@ -616,7 +574,35 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {renderActiveForm()}
+      <Dialog open={activeForm === 'job'} onOpenChange={(open) => !open && handleCloseForm()}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>New Job</DialogTitle>
+            <DialogDescription>Enter the details for the new job</DialogDescription>
+          </DialogHeader>
+          <JobForm />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={activeForm === 'file'} onOpenChange={(open) => !open && handleCloseForm()}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Book via File</DialogTitle>
+            <DialogDescription>Upload a file to create a new job</DialogDescription>
+          </DialogHeader>
+          <FileUploadJobForm />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={activeForm === 'ucid'} onOpenChange={(open) => !open && handleCloseForm()}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Request New UCID</DialogTitle>
+            <DialogDescription>Fill in the details to request a new UCID</DialogDescription>
+          </DialogHeader>
+          <UCIDRequestForm />
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={showMissingEmanifestDialog} onOpenChange={setShowMissingEmanifestDialog}>
         <AlertDialogContent className="max-w-3xl">

@@ -5,12 +5,9 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/utils/auth';
 import { JobStore } from '@/utils/data';
+import { DialogClose } from '@/components/ui/dialog';
 
-interface FileUploadJobFormProps {
-  onClose?: () => void;
-}
-
-const FileUploadJobForm: React.FC<FileUploadJobFormProps> = ({ onClose }) => {
+const FileUploadJobForm = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -119,10 +116,6 @@ const FileUploadJobForm: React.FC<FileUploadJobFormProps> = ({ onClose }) => {
         title: "Job Created via File Upload",
         description: `Job ${newJob.reference} has been created successfully from ${file.name}.`,
       });
-
-      if (onClose) {
-        onClose();
-      }
     }, 1500);
   };
 
@@ -159,22 +152,24 @@ const FileUploadJobForm: React.FC<FileUploadJobFormProps> = ({ onClose }) => {
       </div>
       
       <div className="flex justify-end space-x-2 pt-4">
-        {onClose && (
+        <DialogClose asChild>
           <Button 
             type="button" 
-            variant="outline" 
-            onClick={onClose}
+            variant="outline"
           >
             Cancel
           </Button>
-        )}
-        <Button 
-          type="submit" 
-          className="bg-jobBlue hover:bg-jobBlue-light"
-          disabled={!file || isUploading}
-        >
-          {isUploading ? 'Uploading...' : 'Book Job'}
-        </Button>
+        </DialogClose>
+        <DialogClose asChild>
+          <Button 
+            type="submit" 
+            className="bg-jobBlue hover:bg-jobBlue-light"
+            disabled={!file || isUploading}
+            onClick={handleSubmit}
+          >
+            {isUploading ? 'Uploading...' : 'Book Job'}
+          </Button>
+        </DialogClose>
       </div>
     </form>
   );
