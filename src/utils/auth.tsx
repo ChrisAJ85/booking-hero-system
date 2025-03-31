@@ -20,7 +20,7 @@ export interface SubClient {
 export interface Client {
   id: string;
   name: string;
-  businessName: string;
+  businessName?: string; // Changed from required to optional
   subClients: SubClient[];
 }
 

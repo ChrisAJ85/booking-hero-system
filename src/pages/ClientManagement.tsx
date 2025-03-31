@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
-import { useAuth, Client, SubClient } from '@/utils/auth';
+import { useAuth } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { 
   Table, 
@@ -24,7 +23,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Building, Plus, Edit, Trash2, Users, ChevronDown, ChevronRight } from 'lucide-react';
-import { ClientStore } from '@/utils/data';
+import { ClientStore, Client, SubClient } from '@/utils/data';
 
 const ClientManagement = () => {
   const { isAdmin } = useAuth();
@@ -45,7 +44,6 @@ const ClientManagement = () => {
     name: ''
   });
 
-  // Load clients from storage on component mount
   useEffect(() => {
     const loadedClients = ClientStore.getClients();
     setClientsList(loadedClients);
@@ -151,7 +149,6 @@ const ClientManagement = () => {
     }
 
     if (editingClient) {
-      // Update existing client
       const updatedClient = {
         ...editingClient,
         name: clientFormData.name,
@@ -160,7 +157,6 @@ const ClientManagement = () => {
       
       ClientStore.updateClient(updatedClient);
       
-      // Update local state
       setClientsList(prevClients =>
         prevClients.map(c => c.id === updatedClient.id ? updatedClient : c)
       );
@@ -170,14 +166,12 @@ const ClientManagement = () => {
         description: "Client has been updated successfully."
       });
     } else {
-      // Add new client
       const newClient = ClientStore.addClient({
         name: clientFormData.name,
         businessName: clientFormData.businessName,
         subClients: []
       });
       
-      // Update local state
       setClientsList(prevClients => [...prevClients, newClient]);
       
       toast({
@@ -206,7 +200,6 @@ const ClientManagement = () => {
     console.log("Submitting sub-client for client ID:", clientId);
     
     if (editingSubClient.subClient) {
-      // Update existing sub-client
       const updatedSubClient = {
         ...editingSubClient.subClient,
         name: subClientFormData.name
@@ -215,7 +208,6 @@ const ClientManagement = () => {
       const result = ClientStore.updateSubClient(clientId, updatedSubClient);
       
       if (result) {
-        // Update local state
         setClientsList(prevClients =>
           prevClients.map(client => {
             if (client.id === clientId) {
@@ -242,13 +234,11 @@ const ClientManagement = () => {
         });
       }
     } else {
-      // Add new sub-client
       const newSubClient = ClientStore.addSubClient(clientId, {
         name: subClientFormData.name
       });
       
       if (newSubClient) {
-        // Update local state
         setClientsList(prevClients =>
           prevClients.map(client => {
             if (client.id === clientId) {
@@ -266,7 +256,6 @@ const ClientManagement = () => {
           description: "Sub-client has been added successfully."
         });
         
-        // Ensure the client is expanded
         if (!expandedClients.includes(clientId)) {
           setExpandedClients([...expandedClients, clientId]);
         }
@@ -286,7 +275,6 @@ const ClientManagement = () => {
   const handleDeleteClient = (clientId: string) => {
     ClientStore.deleteClient(clientId);
     
-    // Update local state
     setClientsList(prevClients => 
       prevClients.filter(client => client.id !== clientId)
     );
@@ -301,7 +289,6 @@ const ClientManagement = () => {
     const success = ClientStore.deleteSubClient(clientId, subClientId);
     
     if (success) {
-      // Update local state
       setClientsList(prevClients =>
         prevClients.map(client => {
           if (client.id === clientId) {
