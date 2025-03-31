@@ -28,7 +28,7 @@ const Sidebar: React.FC = () => {
       allowed: true
     },
     {
-      name: 'UCID Requests',
+      name: 'UCID & SCID Requests',
       icon: <BookPlus className="h-5 w-5" />,
       path: '/ucid-requests',
       allowed: isAdmin()

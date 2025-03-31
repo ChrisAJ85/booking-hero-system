@@ -41,10 +41,18 @@ export interface Document {
 
 export interface UCIDRequest {
   id: string;
+  type: 'UCID' | 'SCID';
   clientName: string;
   requestorEmail: string;
-  collectionPointName: string;
-  agencyAccount: boolean;
+  collectionPointName?: string;
+  agencyAccount?: boolean;
+  dateRequested?: string;
+  supplyChainId?: string;
+  supplyChainType?: '2D' | '4 state';
+  supplyChainName?: string;
+  mailOriginator?: string;
+  mailOriginatorParticipantId?: string;
+  mailingAgent?: string;
   comments: string;
   status: 'pending' | 'completed';
   createdAt: string;
@@ -230,6 +238,7 @@ export const mockDocuments: Document[] = [
 export const mockUCIDRequests: UCIDRequest[] = [
   {
     id: '1',
+    type: 'UCID',
     clientName: 'ABC Corporation',
     requestorEmail: 'john.doe@example.com',
     collectionPointName: 'Head Office',
@@ -240,6 +249,7 @@ export const mockUCIDRequests: UCIDRequest[] = [
   },
   {
     id: '2',
+    type: 'UCID',
     clientName: 'XYZ Industries',
     requestorEmail: 'sarah.smith@example.com',
     collectionPointName: 'Warehouse B',
