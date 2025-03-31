@@ -109,7 +109,7 @@ const FileUploadJobForm: React.FC = () => {
         }],
         subClientId: user?.subClients?.[0]?.id || '',
         subClientName: user?.subClients?.[0]?.name || '',
-        clientName: user?.role === 'client' ? user.name : '',
+        clientName: user?.role === 'admin' ? '' : user?.name || '',
       });
 
       setIsUploading(false);
