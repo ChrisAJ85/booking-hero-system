@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, Paperclip, Users } from 'lucide-react';
+import { Building, Calendar, Clock, Paperclip, Users } from 'lucide-react';
 import { Job } from '@/utils/data';
 import { format } from 'date-fns';
 
@@ -47,6 +47,16 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
       </CardHeader>
       <CardContent className="pb-2">
         <p className="text-sm line-clamp-2 text-gray-600 mb-4">{job.description}</p>
+        
+        {job.subClientName && (
+          <div className="mb-3 flex items-center text-sm text-jobBlue-light">
+            <Building className="h-3.5 w-3.5 mr-1" />
+            <span>
+              {job.subClientName} 
+              {job.clientName && <span className="text-xs text-gray-500 ml-1">({job.clientName})</span>}
+            </span>
+          </div>
+        )}
         
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
           <div className="flex items-center">

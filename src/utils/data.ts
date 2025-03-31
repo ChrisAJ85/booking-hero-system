@@ -1,4 +1,3 @@
-
 import { UserRole } from './auth';
 
 export interface Job {
@@ -15,6 +14,9 @@ export interface Job {
   createdAt: string;
   files: File[];
   assignedTo?: string;
+  subClientId?: string;
+  subClientName?: string;
+  clientName?: string;
 }
 
 export interface File {
@@ -37,7 +39,6 @@ export interface Document {
   accessRoles: UserRole[];
 }
 
-// Generate a unique reference number for new jobs
 export const generateJobReference = (): string => {
   const prefix = 'JOB';
   const timestamp = Date.now().toString().slice(-6);
@@ -45,7 +46,6 @@ export const generateJobReference = (): string => {
   return `${prefix}-${timestamp}-${random}`;
 };
 
-// Mock job data
 export const mockJobs: Job[] = [
   {
     id: '1',
@@ -69,7 +69,10 @@ export const mockJobs: Job[] = [
         uploadedAt: '2023-06-12T10:15:00'
       }
     ],
-    assignedTo: 'Manager User'
+    assignedTo: 'Manager User',
+    subClientId: 'sc1',
+    subClientName: 'Marketing Department',
+    clientName: 'ABC Corporation'
   },
   {
     id: '2',
@@ -158,7 +161,6 @@ export const mockJobs: Job[] = [
   }
 ];
 
-// Mock document data
 export const mockDocuments: Document[] = [
   {
     id: 'd1',
@@ -212,12 +214,10 @@ export const mockDocuments: Document[] = [
   }
 ];
 
-// Function to get job by ID
 export const getJobById = (jobId: string): Job | undefined => {
   return mockJobs.find(job => job.id === jobId);
 };
 
-// Function to search jobs
 export const searchJobs = (query: string): Job[] => {
   const lowerQuery = query.toLowerCase();
   return mockJobs.filter(job => 
@@ -227,12 +227,10 @@ export const searchJobs = (query: string): Job[] => {
   );
 };
 
-// Function to get documents by role
 export const getDocumentsByRole = (role: UserRole): Document[] => {
   return mockDocuments.filter(doc => doc.accessRoles.includes(role));
 };
 
-// Job store with local storage persistence
 export const JobStore = {
   getJobs: (): Job[] => {
     const storedJobs = localStorage.getItem('jobSystemJobs');
@@ -273,7 +271,6 @@ export const JobStore = {
   }
 };
 
-// Document store with local storage persistence
 export const DocumentStore = {
   getDocuments: (): Document[] => {
     const storedDocs = localStorage.getItem('jobSystemDocuments');

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar as CalendarIcon, Plus, Upload } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
@@ -25,9 +26,26 @@ const JobForm: React.FC = () => {
     itemCount: 0,
     bagCount: 0,
     files: [] as File[],
+    subClientId: '',
   });
   const [collectionDate, setCollectionDate] = useState<Date | undefined>(undefined);
   const [handoverDate, setHandoverDate] = useState<Date | undefined>(undefined);
+  const [subClients, setSubClients] = useState<Array<{ id: string; name: string; clientName: string }>>([]);
+
+  // Fetch user's sub-clients when the dialog opens
+  useEffect(() => {
+    if (open && user?.subClients) {
+      setSubClients(user.subClients);
+      
+      // If user has only one sub-client, select it by default
+      if (user.subClients.length === 1) {
+        setFormData(prev => ({
+          ...prev,
+          subClientId: user.subClients[0].id
+        }));
+      }
+    }
+  }, [open, user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -74,6 +92,18 @@ const JobForm: React.FC = () => {
       return;
     }
 
+    if (!formData.subClientId && subClients.length > 0) {
+      toast({
+        title: "Form Error",
+        description: "Please select a sub-client.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Find the selected sub-client to get the client name
+    const selectedSubClient = subClients.find(sc => sc.id === formData.subClientId);
+
     // Convert files to the expected format
     const fileObjects = formData.files.map((file, index) => ({
       id: `temp-${index}`,
@@ -95,6 +125,9 @@ const JobForm: React.FC = () => {
       bagCount: formData.bagCount,
       createdBy: user?.name || 'Unknown',
       files: fileObjects,
+      subClientId: formData.subClientId,
+      subClientName: selectedSubClient?.name || '',
+      clientName: selectedSubClient?.clientName || '',
     });
 
     toast({
@@ -116,6 +149,22 @@ const JobForm: React.FC = () => {
     }
   };
 
+  // Reset form data when the dialog closes
+  useEffect(() => {
+    if (!open) {
+      setFormData({
+        title: '',
+        description: '',
+        itemCount: 0,
+        bagCount: 0,
+        files: [],
+        subClientId: '',
+      });
+      setCollectionDate(undefined);
+      setHandoverDate(undefined);
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -129,6 +178,27 @@ const JobForm: React.FC = () => {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="grid grid-cols-1 gap-4">
+            {subClients.length > 0 && (
+              <div className="space-y-2">
+                <Label htmlFor="subClientId">Sub-Client*</Label>
+                <Select 
+                  value={formData.subClientId} 
+                  onValueChange={(value) => setFormData({...formData, subClientId: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a sub-client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subClients.map(subclient => (
+                      <SelectItem key={subclient.id} value={subclient.id}>
+                        {subclient.name} ({subclient.clientName})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="title">Job Title*</Label>
               <Input
@@ -176,6 +246,7 @@ const JobForm: React.FC = () => {
                         validateDates();
                       }}
                       initialFocus
+                      className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
@@ -205,6 +276,7 @@ const JobForm: React.FC = () => {
                         validateDates();
                       }}
                       initialFocus
+                      className="pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
