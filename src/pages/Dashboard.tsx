@@ -3,14 +3,24 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
-import JobCard from '@/components/JobCard';
 import JobForm from '@/components/JobForm';
 import UCIDRequestForm from '@/components/UCIDRequestForm';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Job, JobStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
-import { Calendar, Clock, File, Users } from 'lucide-react';
+import { Calendar, Clock, File, Users, AlertTriangle, ExternalLink } from 'lucide-react';
+import { 
+  Table, 
+  TableBody, 
+  TableHead, 
+  TableHeader, 
+  TableRow, 
+  TableCell 
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
 
 const Dashboard = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -28,6 +38,32 @@ const Dashboard = () => {
     return jobs.filter(job => job.status === activeTab);
   };
 
+  const missingEmanifestJobs = jobs.filter(job => !job.emanifestId);
+  const hasMissingEmanifests = missingEmanifestJobs.length > 0;
+
+  const formatDate = (dateString: string) => {
+    try {
+      return format(new Date(dateString), 'MMM dd, yyyy');
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  const getStatusBadge = (status: Job['status']) => {
+    switch (status) {
+      case 'pending':
+        return <Badge className="bg-orange-100 text-orange-800 border-orange-300">PENDING</Badge>;
+      case 'in_progress':
+        return <Badge className="bg-jobGray-light text-jobGray-dark border-jobGray">IN PROGRESS</Badge>;
+      case 'completed':
+        return <Badge className="bg-green-100 text-green-800 border-green-300">COMPLETED</Badge>;
+      case 'cancelled':
+        return <Badge className="bg-red-100 text-red-800 border-red-300">CANCELLED</Badge>;
+      default:
+        return <Badge className="bg-gray-100 text-gray-800 border-gray-300">{status.toUpperCase()}</Badge>;
+    }
+  };
+
   return (
     <div className="min-h-screen flex">
       <Sidebar />
@@ -42,6 +78,16 @@ const Dashboard = () => {
                 <UCIDRequestForm />
               </div>
             </div>
+            
+            {hasMissingEmanifests && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Missing eManifest IDs</AlertTitle>
+                <AlertDescription>
+                  There are {missingEmanifestJobs.length} jobs missing eManifest IDs. These jobs are highlighted in red below.
+                </AlertDescription>
+              </Alert>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-white p-4 rounded-lg shadow flex justify-between items-center">
@@ -106,11 +152,51 @@ const Dashboard = () => {
                       <JobForm />
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {filteredJobs().map(job => (
-                        <JobCard key={job.id} job={job} />
-                      ))}
-                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => navigate(`/jobs/${job.id}`)}
+                                className="flex items-center gap-1 p-1 h-auto"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                <span>View</span>
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
                 
@@ -121,11 +207,51 @@ const Dashboard = () => {
                       <JobForm />
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {filteredJobs().map(job => (
-                        <JobCard key={job.id} job={job} />
-                      ))}
-                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => navigate(`/jobs/${job.id}`)}
+                                className="flex items-center gap-1 p-1 h-auto"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                <span>View</span>
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
                 
@@ -136,11 +262,51 @@ const Dashboard = () => {
                       <JobForm />
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {filteredJobs().map(job => (
-                        <JobCard key={job.id} job={job} />
-                      ))}
-                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => navigate(`/jobs/${job.id}`)}
+                                className="flex items-center gap-1 p-1 h-auto"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                <span>View</span>
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
                 
@@ -151,11 +317,51 @@ const Dashboard = () => {
                       <JobForm />
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {filteredJobs().map(job => (
-                        <JobCard key={job.id} job={job} />
-                      ))}
-                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => navigate(`/jobs/${job.id}`)}
+                                className="flex items-center gap-1 p-1 h-auto"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                <span>View</span>
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
                 
@@ -166,11 +372,51 @@ const Dashboard = () => {
                       <JobForm />
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {filteredJobs().map(job => (
-                        <JobCard key={job.id} job={job} />
-                      ))}
-                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Job Title</TableHead>
+                          <TableHead>Reference</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead>Collection Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>eManifest ID</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredJobs().map(job => (
+                          <TableRow 
+                            key={job.id} 
+                            className={!job.emanifestId ? 'bg-red-50' : ''}
+                          >
+                            <TableCell className="font-medium">{job.title}</TableCell>
+                            <TableCell>{job.reference}</TableCell>
+                            <TableCell>{job.subClientName || job.clientName}</TableCell>
+                            <TableCell>{formatDate(job.collectionDate)}</TableCell>
+                            <TableCell>{getStatusBadge(job.status)}</TableCell>
+                            <TableCell>
+                              {job.emanifestId ? job.emanifestId : 
+                                <span className="text-red-500 flex items-center gap-1">
+                                  <AlertTriangle className="h-3 w-3" /> Missing
+                                </span>
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                onClick={() => navigate(`/jobs/${job.id}`)}
+                                className="flex items-center gap-1 p-1 h-auto"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                <span>View</span>
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </TabsContent>
               </Tabs>
