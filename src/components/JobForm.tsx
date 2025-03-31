@@ -32,7 +32,6 @@ const JobForm: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Main form data
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -59,45 +58,48 @@ const JobForm: React.FC = () => {
     additionalInfo: '',
   });
   
-  // Dates
   const [collectionDate, setCollectionDate] = useState<Date | undefined>(undefined);
   const [handoverDate, setHandoverDate] = useState<Date | undefined>(undefined);
   const [productionStartDate, setProductionStartDate] = useState<Date | undefined>(undefined);
   const [productionEndDate, setProductionEndDate] = useState<Date | undefined>(undefined);
   const [consumablesRequiredDate, setConsumablesRequiredDate] = useState<Date | undefined>(undefined);
   
-  // Files
   const [dataFiles, setDataFiles] = useState<File[]>([]);
   
-  // Client and subclient data
   const [clients, setClients] = useState<Array<{ id: string; name: string }>>([]);
   const [subClients, setSubClients] = useState<Array<{ id: string; name: string; clientId: string; clientName: string }>>([]);
   const [filteredSubClients, setFilteredSubClients] = useState<Array<{ id: string; name: string; clientName: string }>>([]);
 
-  // Initialize client and subclient data
   useEffect(() => {
     if (open) {
-      // In a real application, fetch this from an API
-      // For this demo, we'll use the user's subClients data
-      if (user?.subClients) {
-        // Extract unique clients from subClients
-        const uniqueClients = new Map();
+      if (user?.subClients && user.subClients.length > 0) {
+        const clientMap = new Map();
+        
         user.subClients.forEach(sc => {
-          uniqueClients.set(sc.clientName, { id: sc.clientName, name: sc.clientName });
+          if (sc.clientName) {
+            clientMap.set(sc.clientName, { 
+              id: sc.clientName, 
+              name: sc.clientName 
+            });
+          }
         });
         
-        setClients(Array.from(uniqueClients.values()));
-        setSubClients(user.subClients.map(sc => ({
+        const clientList = Array.from(clientMap.values());
+        console.log("Available clients:", clientList);
+        setClients(clientList);
+        
+        const subClientList = user.subClients.map(sc => ({
           id: sc.id,
           name: sc.name,
           clientId: sc.clientName,
           clientName: sc.clientName
-        })));
+        }));
+        console.log("Available subclients:", subClientList);
+        setSubClients(subClientList);
       }
     }
   }, [open, user]);
 
-  // Filter subclients when client changes
   useEffect(() => {
     if (formData.clientId) {
       setFilteredSubClients(
@@ -120,7 +122,6 @@ const JobForm: React.FC = () => {
     const { name, value } = e.target;
     const numValue = parseInt(value, 10) || 0;
     
-    // Apply validation for item weight
     if (name === 'itemWeight' && numValue > 999) {
       return;
     }
@@ -194,7 +195,6 @@ const JobForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate required fields
     if (!formData.title || !collectionDate || !handoverDate || !formData.clientId || !formData.subClientId) {
       toast({
         title: "Form Error",
@@ -204,15 +204,13 @@ const JobForm: React.FC = () => {
       return;
     }
 
-    // Validate dates
     if (!validateDates()) {
       return;
     }
 
-    // Find the selected sub-client to get the client name
     const selectedSubClient = subClients.find(sc => sc.id === formData.subClientId);
+    console.log("Selected subclient:", selectedSubClient);
 
-    // Convert files to the expected format
     const fileObjects = dataFiles.map((file, index) => ({
       id: `temp-${index}`,
       name: file.name,
@@ -222,7 +220,6 @@ const JobForm: React.FC = () => {
       uploadedAt: new Date().toISOString(),
     }));
 
-    // Add new job with custom fields stored in description to work around the JobStore interface limitations
     const customFieldsJson = JSON.stringify({
       mailingHouse: formData.mailingHouse,
       poNumber: formData.poNumber,
@@ -272,7 +269,6 @@ const JobForm: React.FC = () => {
     navigate(`/jobs/${newJob.id}`);
   };
 
-  // Reset form data when the dialog closes
   useEffect(() => {
     if (!open) {
       setFormData({
@@ -324,7 +320,6 @@ const JobForm: React.FC = () => {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 pt-4">
-          {/* Customer and Job Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Customer and Job Information</h3>
             
@@ -483,7 +478,6 @@ const JobForm: React.FC = () => {
             </div>
           </div>
           
-          {/* Job Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Job Details</h3>
             
@@ -621,7 +615,6 @@ const JobForm: React.FC = () => {
             </div>
           </div>
           
-          {/* Bureau Services */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Bureau Services</h3>
             
@@ -712,7 +705,6 @@ const JobForm: React.FC = () => {
             </div>
           </div>
           
-          {/* Consumables */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Consumables</h3>
             
@@ -888,7 +880,6 @@ const JobForm: React.FC = () => {
             )}
           </div>
           
-          {/* Additional Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Additional Information</h3>
             
