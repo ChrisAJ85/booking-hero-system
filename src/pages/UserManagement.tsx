@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
-import { useAuth, User, users, Client, clients } from '@/utils/auth';
+import { useAuth, User, users, Client, clients, SubClient } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { 
   Table, 
@@ -328,7 +328,7 @@ const UserManagement = () => {
                           {allSubClients.length > 0 ? (
                             <div className="space-y-2">
                               {allSubClients.map(subclient => (
-                                <div key={subclient.id} className="flex items-center space-x-2">
+                                <div key={subclient.id} className="flex items-start space-x-2">
                                   <Checkbox 
                                     id={`subclient-${subclient.id}`}
                                     checked={formData.allowedSubClients?.includes(subclient.id)}
@@ -374,6 +374,7 @@ const UserManagement = () => {
                     <TableHead>Business</TableHead>
                     <TableHead>Contact</TableHead>
                     <TableHead>Role</TableHead>
+                    <TableHead>Sub-Clients</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -388,6 +389,22 @@ const UserManagement = () => {
                         {user.landlineNumber && <div className="text-sm text-gray-500">{user.landlineNumber}</div>}
                       </TableCell>
                       <TableCell className="capitalize">{user.role}</TableCell>
+                      <TableCell>
+                        {user.role === 'user' && user.allowedSubClients && user.allowedSubClients.length > 0 ? (
+                          <div className="text-sm">
+                            {user.allowedSubClients.map(subClientId => {
+                              const subClient = allSubClients.find(sc => sc.id === subClientId);
+                              return subClient ? (
+                                <div key={subClientId} className="mb-1">
+                                  {subClient.name} <span className="text-xs text-gray-500">({subClient.clientName})</span>
+                                </div>
+                              ) : null;
+                            })}
+                          </div>
+                        ) : (
+                          <span className="text-gray-500">-</span>
+                        )}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end space-x-2">
                           <Button 
