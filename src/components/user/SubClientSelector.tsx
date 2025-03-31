@@ -2,7 +2,7 @@
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 
-interface SubClientWithClient {
+export interface SubClientWithClient {
   id: string;
   name: string;
   clientName: string;

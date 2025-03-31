@@ -199,8 +199,17 @@ const ClientManagement = () => {
       return;
     }
 
-    const clientId = editingSubClient.clientId;
+    const { clientId } = editingSubClient;
     console.log("Submitting sub-client for client ID:", clientId);
+    
+    if (!clientId) {
+      toast({
+        title: "Error",
+        description: "Client ID is missing. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     if (editingSubClient.subClient) {
       // Updating existing sub-client
@@ -346,6 +355,9 @@ const ClientManagement = () => {
                 <DialogContent className="sm:max-w-[500px]">
                   <DialogHeader>
                     <DialogTitle>{editingClient ? 'Edit Client' : 'Add New Client'}</DialogTitle>
+                    <DialogDescription>
+                      {editingClient ? 'Update the client details below.' : 'Fill in the details to add a new client.'}
+                    </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleClientSubmit} className="space-y-4 pt-4">
                     <div className="space-y-2">
@@ -387,6 +399,11 @@ const ClientManagement = () => {
                     <DialogTitle>
                       {editingSubClient.subClient ? 'Edit Sub-Client' : 'Add New Sub-Client'}
                     </DialogTitle>
+                    <DialogDescription>
+                      {editingSubClient.subClient 
+                        ? 'Update the sub-client details below.' 
+                        : 'Fill in the details to add a new sub-client.'}
+                    </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleSubClientSubmit} className="space-y-4 pt-4">
                     <div className="space-y-2">
