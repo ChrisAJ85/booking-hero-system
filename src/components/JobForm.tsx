@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
-import { JobStore } from '@/utils/data';
+import { JobStore, ClientStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
 
 const mailingHouses = ["Mailing House A", "Mailing House B"];
@@ -74,8 +74,60 @@ const JobForm: React.FC = () => {
     if (open) {
       console.log("Dialog opened, user data:", user);
       
-      if (!user?.subClients || user.subClients.length === 0) {
-        console.log("No subClients found for user, adding default options");
+      const storedClients = ClientStore.getClients();
+      
+      if (storedClients.length > 0) {
+        console.log("Using clients from ClientStore:", storedClients);
+        
+        const clientList = storedClients.map(client => ({
+          id: client.id,
+          name: client.name
+        }));
+        
+        setClients(clientList);
+        
+        const subClientList = storedClients.flatMap(client => 
+          client.subClients.map(sc => ({
+            id: sc.id,
+            name: sc.name,
+            clientId: client.id,
+            clientName: client.name
+          }))
+        );
+        
+        console.log("Formatted subclients from ClientStore:", subClientList);
+        setSubClients(subClientList);
+      }
+      else if (user?.subClients && user.subClients.length > 0) {
+        console.log("Using subClients from user data");
+        
+        const clientMap = new Map();
+        
+        user.subClients.forEach(sc => {
+          if (sc.clientName) {
+            clientMap.set(sc.clientName, { 
+              id: sc.clientName, 
+              name: sc.clientName 
+            });
+          }
+        });
+        
+        const clientList = Array.from(clientMap.values());
+        console.log("Extracted clients from user data:", clientList);
+        setClients(clientList);
+        
+        const subClientList = user.subClients.map(sc => ({
+          id: sc.id,
+          name: sc.name,
+          clientId: sc.clientName,
+          clientName: sc.clientName
+        }));
+        
+        console.log("Formatted subclients from user data:", subClientList);
+        setSubClients(subClientList);
+      }
+      else {
+        console.log("No clients found, adding default options");
         
         const defaultClients = [
           { id: 'default-client-1', name: 'Sample Client' },
@@ -105,39 +157,34 @@ const JobForm: React.FC = () => {
         
         setClients(defaultClients);
         setSubClients(defaultSubClients);
-      } else {
-        const clientMap = new Map();
-        
-        user.subClients.forEach(sc => {
-          if (sc.clientName) {
-            clientMap.set(sc.clientName, { 
-              id: sc.clientName, 
-              name: sc.clientName 
-            });
-          }
-        });
-        
-        const clientList = Array.from(clientMap.values());
-        console.log("Extracted clients:", clientList);
-        setClients(clientList);
-        
-        const subClientList = user.subClients.map(sc => ({
-          id: sc.id,
-          name: sc.name,
-          clientId: sc.clientName,
-          clientName: sc.clientName
+      }
+      
+      if (clients.length > 0 && !formData.clientId) {
+        setFormData(prev => ({
+          ...prev,
+          clientId: clients[0].id
         }));
-        console.log("Formatted subclients:", subClientList);
-        setSubClients(subClientList);
       }
     }
   }, [open, user]);
 
   useEffect(() => {
     if (formData.clientId) {
-      setFilteredSubClients(
-        subClients.filter(sc => sc.clientId === formData.clientId)
-      );
+      const filtered = subClients.filter(sc => sc.clientId === formData.clientId);
+      console.log("Filtered subclients for client", formData.clientId, ":", filtered);
+      setFilteredSubClients(filtered);
+      
+      if (filtered.length > 0 && !formData.subClientId) {
+        setFormData(prev => ({
+          ...prev,
+          subClientId: filtered[0].id
+        }));
+      } else if (filtered.length === 0) {
+        setFormData(prev => ({
+          ...prev,
+          subClientId: ''
+        }));
+      }
     } else {
       setFilteredSubClients([]);
     }

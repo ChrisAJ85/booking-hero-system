@@ -5,6 +5,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, X } from 'lucide-react';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export interface SubClientWithClient {
   id: string;
@@ -33,11 +40,17 @@ const SubClientSelector = ({
 
   const handleAddSubClient = () => {
     if (newSubClientName.trim() && selectedClientId && onAddNewSubClient) {
+      console.log("Adding new subclient:", newSubClientName, "to client:", selectedClientId);
       onAddNewSubClient(newSubClientName.trim(), selectedClientId);
       setNewSubClientName('');
       setShowAddForm(false);
     }
   };
+
+  // Update selectedClientId when clients array changes
+  if (clients.length > 0 && !selectedClientId) {
+    setSelectedClientId(clients[0].id);
+  }
 
   return (
     <div className="space-y-2">
@@ -102,17 +115,21 @@ const SubClientSelector = ({
                     className="mb-2"
                   />
                   
-                  <select
-                    className="w-full p-2 border rounded-md text-sm"
+                  <Select
                     value={selectedClientId}
-                    onChange={(e) => setSelectedClientId(e.target.value)}
+                    onValueChange={setSelectedClientId}
                   >
-                    {clients.map(client => (
-                      <option key={client.id} value={client.id}>
-                        {client.name}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a client" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clients.map(client => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   
                   <Button 
                     type="button" 
