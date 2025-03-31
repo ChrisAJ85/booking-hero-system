@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
 
@@ -27,6 +26,7 @@ export interface User {
   businessName?: string;
   role: UserRole;
   allowedSubClients?: string[]; // IDs of sub-clients this user can book jobs for
+  subClients?: Array<{ id: string; name: string; clientName: string }>; // For fetching user's allowed sub-clients
 }
 
 interface AuthContextType {
@@ -105,7 +105,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const savedUser = localStorage.getItem('jobSystemUser');
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        
+        // Add subClients property to the user based on allowedSubClients
+        if (parsedUser.allowedSubClients && parsedUser.allowedSubClients.length > 0) {
+          parsedUser.subClients = clients.flatMap(client => 
+            client.subClients
+              .filter(subclient => parsedUser.allowedSubClients.includes(subclient.id))
+              .map(subclient => ({
+                id: subclient.id,
+                name: subclient.name,
+                clientName: client.name
+              }))
+          );
+        } else {
+          parsedUser.subClients = [];
+        }
+        
+        setUser(parsedUser);
         console.log("User loaded from localStorage");
       } catch (e) {
         console.error("Failed to parse user from localStorage", e);
@@ -121,8 +138,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const foundUser = users.find(u => u.email === email);
     
     if (foundUser && password === 'password') { // Simple password check for demo
-      setUser(foundUser);
-      localStorage.setItem('jobSystemUser', JSON.stringify(foundUser));
+      // Add subClients property to the user based on allowedSubClients
+      const userWithSubClients = { ...foundUser };
+      
+      if (userWithSubClients.allowedSubClients && userWithSubClients.allowedSubClients.length > 0) {
+        userWithSubClients.subClients = clients.flatMap(client => 
+          client.subClients
+            .filter(subclient => userWithSubClients.allowedSubClients!.includes(subclient.id))
+            .map(subclient => ({
+              id: subclient.id,
+              name: subclient.name,
+              clientName: client.name
+            }))
+        );
+      } else {
+        userWithSubClients.subClients = [];
+      }
+      
+      setUser(userWithSubClients);
+      localStorage.setItem('jobSystemUser', JSON.stringify(userWithSubClients));
       toast({
         title: "Login successful",
         description: `Welcome back, ${foundUser.name}!`,
