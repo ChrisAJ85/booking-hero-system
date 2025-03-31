@@ -80,7 +80,7 @@ const Dashboard = () => {
       case 'cancelled':
         return <Badge className="bg-red-100 text-red-800 border-red-300">CANCELLED</Badge>;
       default:
-        return <Badge className="bg-gray-100 text-gray-800 border-gray-300">{status.toUpperCase()}</Badge>;
+        return <Badge className="bg-gray-100 text-gray-800 border-gray-300">{String(status).toUpperCase()}</Badge>;
     }
   };
 
