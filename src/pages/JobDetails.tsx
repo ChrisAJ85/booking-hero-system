@@ -6,11 +6,23 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Download, FileText, MapPin, Building, Paperclip, Truck, User, Users, Package } from 'lucide-react';
+import { Calendar, Clock, Download, FileText, MapPin, Building, Paperclip, Truck, User, Users, Package, Edit, Ban } from 'lucide-react';
 import { Job, JobStore, getJobById } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import EditJobForm from '@/components/EditJobForm';
 
 const JobDetails = () => {
   const { jobId } = useParams<{ jobId: string }>();
@@ -18,6 +30,7 @@ const JobDetails = () => {
   const [loading, setLoading] = useState(true);
   const [statusChanged, setStatusChanged] = useState(false);
   const [customFields, setCustomFields] = useState<any>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const { user, hasPermission } = useAuth();
   const navigate = useNavigate();
   
@@ -56,40 +69,46 @@ const JobDetails = () => {
       setLoading(false);
     }
   }, [jobId, navigate]);
+
+  const handleJobUpdate = (updatedJob: Job) => {
+    setJob(updatedJob);
+    setIsEditing(false);
+    
+    try {
+      if (updatedJob.description && updatedJob.description.includes('{')) {
+        const descParts = updatedJob.description.split('\n\n');
+        if (descParts.length > 1) {
+          const jsonStr = descParts[descParts.length - 1];
+          const parsedCustomFields = JSON.parse(jsonStr);
+          setCustomFields(parsedCustomFields);
+        }
+      }
+    } catch (e) {
+      console.error('Error parsing custom fields:', e);
+    }
+    
+    toast({
+      title: "Success",
+      description: "Job details updated successfully"
+    });
+  };
   
-  if (loading) {
-    return (
-      <div className="min-h-screen flex">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <div className="flex-1 bg-jobGray-light p-6 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jobBlue mx-auto mb-4"></div>
-              <p className="text-lg text-gray-600">Loading job details...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-  
-  if (!job) {
-    return (
-      <div className="min-h-screen flex">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <div className="flex-1 bg-jobGray-light p-6 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-lg text-red-600 mb-4">Job not found</p>
-              <Button onClick={() => navigate('/dashboard')}>Return to Dashboard</Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleCancelJob = () => {
+    if (job) {
+      const updatedJob = {
+        ...job,
+        status: 'cancelled' as const
+      };
+      
+      JobStore.updateJob(updatedJob);
+      setJob(updatedJob);
+      
+      toast({
+        title: "Job Cancelled",
+        description: "The job has been cancelled successfully"
+      });
+    }
+  };
   
   const formatDate = (dateString: string) => {
     try {
@@ -136,6 +155,67 @@ const JobDetails = () => {
     return parts.length > 1 ? parts[0] : job.description;
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex">
+        <Sidebar />
+        <div className="flex-1 flex flex-col">
+          <Navbar />
+          <div className="flex-1 bg-jobGray-light p-6 flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jobBlue mx-auto mb-4"></div>
+              <p className="text-lg text-gray-600">Loading job details...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!job) {
+    return (
+      <div className="min-h-screen flex">
+        <Sidebar />
+        <div className="flex-1 flex flex-col">
+          <Navbar />
+          <div className="flex-1 bg-jobGray-light p-6 flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-lg text-red-600 mb-4">Job not found</p>
+              <Button onClick={() => navigate('/dashboard')}>Return to Dashboard</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (isEditing) {
+    return (
+      <div className="min-h-screen flex">
+        <Sidebar />
+        <div className="flex-1 flex flex-col">
+          <Navbar />
+          <div className="flex-1 bg-jobGray-light p-6 overflow-auto">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-800">Edit Job</h1>
+                <Button variant="outline" onClick={() => setIsEditing(false)}>
+                  Cancel
+                </Button>
+              </div>
+              
+              <Card>
+                <CardContent className="pt-6">
+                  <EditJobForm job={job} onUpdate={handleJobUpdate} />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="min-h-screen flex">
       <Sidebar />
@@ -158,18 +238,57 @@ const JobDetails = () => {
                 <Button variant="outline" onClick={() => navigate('/dashboard')}>
                   Back to Dashboard
                 </Button>
-                {hasPermission('manager') && (
-                  <Select defaultValue={job?.status} onValueChange={handleStatusChange}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Change Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
+                
+                {hasPermission('manager') && job?.status !== 'cancelled' && (
+                  <>
+                    <Button 
+                      variant="outline"
+                      className="flex items-center gap-1"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <Edit className="h-4 w-4" />
+                      Edit Job
+                    </Button>
+                    
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="destructive"
+                          className="flex items-center gap-1"
+                        >
+                          <Ban className="h-4 w-4" />
+                          Cancel Job
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Cancel Job</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to cancel this job? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>No, keep job active</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleCancelJob}>
+                            Yes, cancel job
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    
+                    {job?.status !== 'completed' && (
+                      <Select defaultValue={job?.status} onValueChange={handleStatusChange}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue placeholder="Change Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="in_progress">In Progress</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </>
                 )}
               </div>
             </div>
