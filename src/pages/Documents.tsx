@@ -239,11 +239,12 @@ const Documents = () => {
                   </p>
                   
                   {isAdmin() && (
-                    <DialogTrigger asChild>
-                      <Button className="bg-jobBlue hover:bg-jobBlue-light">
-                        <Plus className="mr-2 h-4 w-4" /> Upload Document
-                      </Button>
-                    </DialogTrigger>
+                    <Button 
+                      className="bg-jobBlue hover:bg-jobBlue-light"
+                      onClick={() => setOpen(true)}
+                    >
+                      <Plus className="mr-2 h-4 w-4" /> Upload Document
+                    </Button>
                   )}
                 </div>
               ) : (
