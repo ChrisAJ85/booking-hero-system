@@ -13,6 +13,7 @@ import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/UserManagement";
 import ClientManagement from "./pages/ClientManagement";
+import UCIDRequests from "./pages/UCIDRequests";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Create a query client
@@ -57,6 +58,11 @@ const App = () => {
                 <Route path="/clients" element={
                   <ProtectedRoute requiredRole="admin">
                     <ClientManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/ucid-requests" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <UCIDRequests />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />
