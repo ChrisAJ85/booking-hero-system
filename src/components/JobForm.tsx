@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
@@ -223,21 +222,8 @@ const JobForm: React.FC = () => {
       uploadedAt: new Date().toISOString(),
     }));
 
-    // Add new job
-    const newJob = JobStore.addJob({
-      title: formData.title,
-      description: formData.description,
-      status: 'pending',
-      collectionDate: collectionDate.toISOString(),
-      handoverDate: handoverDate.toISOString(),
-      itemCount: 0, // Not part of new form
-      bagCount: 0, // Not part of new form
-      createdBy: user?.name || 'Unknown',
-      files: fileObjects,
-      subClientId: formData.subClientId,
-      subClientName: selectedSubClient?.name || '',
-      clientName: selectedSubClient?.clientName || '',
-      // Additional fields
+    // Add new job with custom fields stored in description to work around the JobStore interface limitations
+    const customFieldsJson = JSON.stringify({
       mailingHouse: formData.mailingHouse,
       poNumber: formData.poNumber,
       fdm: formData.fdm,
@@ -260,6 +246,21 @@ const JobForm: React.FC = () => {
       pallets: formData.pallets,
       yorks: formData.yorks,
       additionalInfo: formData.additionalInfo,
+    });
+
+    const newJob = JobStore.addJob({
+      title: formData.title,
+      description: `${formData.description}\n\n${customFieldsJson}`,
+      status: 'pending',
+      collectionDate: collectionDate.toISOString(),
+      handoverDate: handoverDate.toISOString(),
+      itemCount: 0,
+      bagCount: 0,
+      createdBy: user?.name || 'Unknown',
+      files: fileObjects,
+      subClientId: formData.subClientId,
+      subClientName: selectedSubClient?.name || '',
+      clientName: selectedSubClient?.clientName || '',
     });
 
     toast({

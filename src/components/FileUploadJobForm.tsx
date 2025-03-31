@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -41,9 +40,17 @@ const FileUploadJobForm: React.FC = () => {
     // Simulate processing the file
     setTimeout(() => {
       // Create a sample job from the file
+      // Store additional metadata in the description as JSON to work around typing limitations
+      const customFieldsJson = JSON.stringify({
+        fileUpload: true,
+        fileName: file.name,
+        fileType: file.type,
+        uploadDate: new Date().toISOString()
+      });
+      
       const newJob = JobStore.addJob({
         title: `Job from ${file.name}`,
-        description: `Automatically created from file upload: ${file.name}`,
+        description: `Automatically created from file upload: ${file.name}\n\n${customFieldsJson}`,
         status: 'pending',
         collectionDate: new Date().toISOString(),
         handoverDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
