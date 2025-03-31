@@ -1,8 +1,10 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush } from 'lucide-react';
+import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/utils/auth';
+import { Button } from './ui/button';
+import JobForm from './JobForm';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
@@ -77,6 +79,10 @@ const Sidebar: React.FC = () => {
             </div>
             <div className="capitalize mt-1">{user?.role}</div>
           </div>
+        </div>
+
+        <div className="px-4 my-2">
+          <JobForm />
         </div>
 
         <div className="space-y-1">
