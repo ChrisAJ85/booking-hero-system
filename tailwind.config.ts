@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -71,7 +72,12 @@ export default {
           			light: '#a1a1a1',
           			dark: '#6e6e6e',
           			lighter: '#F9FAFB'
-        		}
+        		},
+				jobRed: {
+					DEFAULT: '#ca1719',
+					light: '#e3292b',
+					dark: '#a71314'
+				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

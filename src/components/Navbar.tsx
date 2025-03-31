@@ -16,21 +16,21 @@ const Navbar: React.FC = () => {
             alt="Job Booking System Logo" 
             className="h-8 mr-3"
           />
-          <Link to="/dashboard" className="text-xl font-bold">Job Booking System</Link>
+          <Link to="/dashboard" className="text-xl font-bold text-jobRed">Job Booking System</Link>
         </div>
         
         <div className="flex items-center space-x-6">
-          <Link to="/dashboard" className="flex items-center hover:text-gray-200">
+          <Link to="/dashboard" className="flex items-center hover:text-jobRed">
             <Calendar className="mr-1 h-4 w-4" />
             <span>Jobs</span>
           </Link>
           
-          <Link to="/documents" className="flex items-center hover:text-gray-200">
+          <Link to="/documents" className="flex items-center hover:text-jobRed">
             <FileText className="mr-1 h-4 w-4" />
             <span>Documents</span>
           </Link>
           
-          <Link to="/search" className="flex items-center hover:text-gray-200">
+          <Link to="/search" className="flex items-center hover:text-jobRed">
             <Search className="mr-1 h-4 w-4" />
             <span>Search</span>
           </Link>

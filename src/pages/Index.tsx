@@ -27,7 +27,7 @@ const Index = () => {
     <div className="min-h-screen flex items-center justify-center bg-jobGray-lighter">
       <div className="w-full max-w-md p-6">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-jobGray-dark">Job Booking System</h1>
+          <h1 className="text-3xl font-bold text-jobRed">Job Booking System</h1>
           <p className="text-gray-600 mt-2">Manage jobs, documents, and more</p>
         </div>
         
@@ -66,7 +66,7 @@ const Index = () => {
             <CardFooter>
               <Button 
                 type="submit" 
-                className="w-full bg-jobGray hover:bg-jobGray-light"
+                className="w-full bg-jobRed hover:bg-jobRed-light"
               >
                 Sign In
               </Button>

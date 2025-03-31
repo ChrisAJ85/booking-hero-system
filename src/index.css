@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -39,6 +40,11 @@
     --jobGray-light: 0 0% 63%;
     --jobGray-dark: 0 0% 43%;
     --jobGray-lighter: 0 0% 98%;
+    
+    /* Job System Red Colors */
+    --jobRed: 359 78% 44%;  /* #ca1719 */
+    --jobRed-light: 359 78% 53%;
+    --jobRed-dark: 359 78% 36%;
   }
 
   .dark {
@@ -124,4 +130,29 @@
 
 .text-jobGray-light {
   color: hsl(var(--jobGray-light));
+}
+
+/* Job System Red Classes */
+.bg-jobRed {
+  background-color: hsl(var(--jobRed));
+}
+
+.bg-jobRed-light {
+  background-color: hsl(var(--jobRed-light));
+}
+
+.bg-jobRed-dark {
+  background-color: hsl(var(--jobRed-dark));
+}
+
+.text-jobRed {
+  color: hsl(var(--jobRed));
+}
+
+.text-jobRed-light {
+  color: hsl(var(--jobRed-light));
+}
+
+.text-jobRed-dark {
+  color: hsl(var(--jobRed-dark));
 }
