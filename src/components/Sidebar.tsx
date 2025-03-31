@@ -92,7 +92,7 @@ const Sidebar: React.FC = () => {
         {/* Add New Job Button */}
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-full mb-4 border border-jobGray hover:bg-gray-100">
+            <Button className="w-full mb-4 bg-jobRed hover:bg-red-700 text-white">
               <Plus className="h-4 w-4 mr-2" /> New Job
             </Button>
           </DialogTrigger>
