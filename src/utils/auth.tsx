@@ -4,6 +4,13 @@ import { toast } from "@/hooks/use-toast";
 export type UserRole = 'admin' | 'manager' | 'user';
 export type UserStatus = 'active' | 'suspended';
 
+export interface LoginHistoryEntry {
+  timestamp: string;
+  ipAddress: string;
+  deviceInfo: string;
+  location?: string;
+}
+
 export interface SubClient {
   id: string;
   name: string;
@@ -29,6 +36,7 @@ export interface User {
   status: UserStatus; // Added user status field
   allowedSubClients?: string[]; // IDs of sub-clients this user can book jobs for
   subClients?: Array<{ id: string; name: string; clientName: string }>; // For fetching user's allowed sub-clients
+  loginHistory?: LoginHistoryEntry[]; // Added login history
 }
 
 interface AuthContextType {
@@ -50,7 +58,15 @@ export const users: User[] = [
     email: 'admin@example.com', 
     mobileNumber: '07700 900123',
     role: 'admin',
-    status: 'active'
+    status: 'active',
+    loginHistory: [
+      {
+        timestamp: '2023-10-15T09:30:45Z',
+        ipAddress: '192.168.1.1',
+        deviceInfo: 'Chrome 98.0, Windows 10',
+        location: 'London, UK'
+      }
+    ]
   },
   { 
     id: '2', 
@@ -61,7 +77,15 @@ export const users: User[] = [
     mobileNumber: '07700 900456',
     businessName: 'Management Ltd',
     role: 'manager',
-    status: 'active' 
+    status: 'active',
+    loginHistory: [
+      {
+        timestamp: '2023-10-14T14:22:33Z',
+        ipAddress: '192.168.1.2',
+        deviceInfo: 'Safari 15.0, macOS',
+        location: 'Manchester, UK'
+      }
+    ]
   },
   { 
     id: '3', 
@@ -74,11 +98,18 @@ export const users: User[] = [
     businessName: 'Client Company Ltd',
     role: 'user',
     status: 'active',
-    allowedSubClients: ['1', '2'] 
+    allowedSubClients: ['1', '2'],
+    loginHistory: [
+      {
+        timestamp: '2023-10-13T11:15:20Z',
+        ipAddress: '192.168.1.3',
+        deviceInfo: 'Firefox 95.0, Ubuntu Linux',
+        location: 'Birmingham, UK'
+      }
+    ]
   },
 ];
 
-// Sample clients data
 export const clients: Client[] = [
   {
     id: '1',
@@ -170,6 +201,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         userWithSubClients.subClients = [];
       }
       
+      // Add a new login history entry
+      const newLoginEntry: LoginHistoryEntry = {
+        timestamp: new Date().toISOString(),
+        ipAddress: '192.168.1.' + Math.floor(Math.random() * 255), // Simulated IP for demo
+        deviceInfo: getBrowserInfo(),
+        location: getRandomLocation() // Simulated location for demo
+      };
+      
+      if (!userWithSubClients.loginHistory) {
+        userWithSubClients.loginHistory = [];
+      }
+      
+      userWithSubClients.loginHistory = [
+        newLoginEntry,
+        ...(userWithSubClients.loginHistory || []).slice(0, 9) // Keep only last 10 entries
+      ];
+      
       setUser(userWithSubClients);
       localStorage.setItem('jobSystemUser', JSON.stringify(userWithSubClients));
       toast({
@@ -185,6 +233,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       variant: "destructive"
     });
     return false;
+  };
+
+  const getBrowserInfo = (): string => {
+    const userAgent = navigator.userAgent;
+    let browserName = "Unknown";
+    let browserVersion = "";
+    let osName = "Unknown";
+    
+    // Extract browser name and version
+    if (userAgent.indexOf("Firefox") > -1) {
+      browserName = "Firefox";
+      browserVersion = userAgent.match(/Firefox\/([0-9.]+)/)?.[1] || "";
+    } else if (userAgent.indexOf("Chrome") > -1) {
+      browserName = "Chrome";
+      browserVersion = userAgent.match(/Chrome\/([0-9.]+)/)?.[1] || "";
+    } else if (userAgent.indexOf("Safari") > -1) {
+      browserName = "Safari";
+      browserVersion = userAgent.match(/Safari\/([0-9.]+)/)?.[1] || "";
+    } else if (userAgent.indexOf("Edge") > -1) {
+      browserName = "Edge";
+      browserVersion = userAgent.match(/Edge\/([0-9.]+)/)?.[1] || "";
+    }
+    
+    // Extract OS name
+    if (userAgent.indexOf("Win") > -1) {
+      osName = "Windows";
+    } else if (userAgent.indexOf("Mac") > -1) {
+      osName = "macOS";
+    } else if (userAgent.indexOf("Linux") > -1) {
+      osName = "Linux";
+    } else if (userAgent.indexOf("Android") > -1) {
+      osName = "Android";
+    } else if (userAgent.indexOf("iOS") > -1) {
+      osName = "iOS";
+    }
+    
+    return `${browserName} ${browserVersion}, ${osName}`;
+  };
+  
+  const getRandomLocation = (): string => {
+    const locations = [
+      "London, UK",
+      "Manchester, UK",
+      "Birmingham, UK",
+      "Edinburgh, UK",
+      "Cardiff, UK",
+      "Belfast, UK",
+      "Glasgow, UK",
+      "Liverpool, UK",
+      "Bristol, UK",
+      "Leeds, UK"
+    ];
+    return locations[Math.floor(Math.random() * locations.length)];
   };
 
   const logout = () => {

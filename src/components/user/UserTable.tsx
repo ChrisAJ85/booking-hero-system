@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { User, UserStatus } from '@/utils/auth';
+import { User, UserStatus, LoginHistoryEntry } from '@/utils/auth';
 import { 
   Table, 
   TableBody, 
@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { UserCog, UserX, UserCheck } from 'lucide-react';
+import { UserCog, UserX, UserCheck, History } from 'lucide-react';
 import { 
   AlertDialog, 
   AlertDialogAction, 
@@ -23,6 +23,15 @@ import {
   AlertDialogTitle, 
   AlertDialogTrigger 
 } from '@/components/ui/alert-dialog';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from '@/components/ui/dialog';
+import UserLoginHistory from './UserLoginHistory';
 
 interface SubClientWithClient {
   id: string;
@@ -47,6 +56,14 @@ const UserTable = ({
   onDeleteUser,
   onToggleStatus
 }: UserTableProps) => {
+  const [selectedUserHistory, setSelectedUserHistory] = useState<LoginHistoryEntry[] | undefined>(undefined);
+  const [historyUserName, setHistoryUserName] = useState<string>('');
+
+  const handleViewHistory = (user: User) => {
+    setSelectedUserHistory(user.loginHistory);
+    setHistoryUserName(user.name);
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -98,6 +115,31 @@ const UserTable = ({
             </TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end space-x-2">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-blue-500 border-blue-200 hover:bg-blue-50"
+                      onClick={() => handleViewHistory(user)}
+                    >
+                      <History className="h-4 w-4" />
+                      <span className="sr-only">View Login History</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[800px]">
+                    <DialogHeader>
+                      <DialogTitle>Login History for {historyUserName}</DialogTitle>
+                      <DialogDescription>
+                        This shows when and where the user has logged in recently.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-4">
+                      <UserLoginHistory loginHistory={selectedUserHistory} />
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                
                 <Button 
                   variant="outline" 
                   size="sm" 
