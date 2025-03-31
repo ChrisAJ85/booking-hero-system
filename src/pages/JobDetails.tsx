@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -6,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Download, FileText, MapPin, Building, Paperclip, Truck, User, Users, Package, Edit, Ban } from 'lucide-react';
-import { Job, JobStore, getJobById } from '@/utils/data';
+import { Calendar, Clock, Download, FileText, Building, Paperclip, User, Users, Package, Edit, Ban } from 'lucide-react';
+import { Job, JobStore } from '@/utils/data';
 import { useAuth } from '@/utils/auth';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
@@ -147,12 +148,6 @@ const JobDetails = () => {
       title: "Status Updated",
       description: `Job status changed to ${newStatus.replace('_', ' ')}`
     });
-  };
-
-  const getCleanDescription = () => {
-    if (!job?.description) return '';
-    const parts = job.description.split('\n\n');
-    return parts.length > 1 ? parts[0] : job.description;
   };
 
   if (loading) {
@@ -301,12 +296,7 @@ const JobDetails = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500">Description</h3>
-                        <p className="mt-1 bg-jobField rounded p-2">{getCleanDescription()}</p>
-                      </div>
-                      
-                      <div className="pt-2 border-t">
+                      <div className="pt-2">
                         <h3 className="text-md font-medium pb-2">Client Information</h3>
                         <div className="grid grid-cols-2 gap-4">
                           {job?.clientName && (
@@ -467,51 +457,6 @@ const JobDetails = () => {
                                 </div>
                               )}
                             </div>
-                          </div>
-                          
-                          <div className="pt-2 border-t">
-                            <h3 className="text-md font-medium pb-2">Locations</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                              {customFields.collectionAddress && (
-                                <div>
-                                  <h3 className="text-sm font-medium text-gray-500">Collection Address</h3>
-                                  <p className="job-field">
-                                    <MapPin className="job-field-icon h-4 w-4" />
-                                    <span className="whitespace-pre-line">{customFields.collectionAddress}</span>
-                                  </p>
-                                </div>
-                              )}
-                              {customFields.handoverAddress && (
-                                <div>
-                                  <h3 className="text-sm font-medium text-gray-500">Handover Address</h3>
-                                  <p className="job-field">
-                                    <MapPin className="job-field-icon h-4 w-4" />
-                                    <span className="whitespace-pre-line">{customFields.handoverAddress}</span>
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          
-                          <div className="pt-2 border-t">
-                            <h3 className="text-md font-medium pb-2">Delivery Information</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                              {customFields.vehicleType && (
-                                <div>
-                                  <h3 className="text-sm font-medium text-gray-500">Vehicle Type</h3>
-                                  <p className="job-field">
-                                    <Truck className="job-field-icon h-4 w-4" />
-                                    {customFields.vehicleType}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                            {customFields.deliveryInstructions && (
-                              <div className="mt-3">
-                                <h3 className="text-sm font-medium text-gray-500">Delivery Instructions</h3>
-                                <p className="job-field whitespace-pre-line">{customFields.deliveryInstructions}</p>
-                              </div>
-                            )}
                           </div>
                           
                           <div className="pt-2 border-t">

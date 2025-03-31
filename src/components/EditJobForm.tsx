@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Job, JobStore } from '@/utils/data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { 
   Form,
   FormControl,
@@ -34,13 +33,6 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
     job.handoverDate ? new Date(job.handoverDate) : undefined
   );
 
-  // Clean the description to get only the text part
-  const getCleanDescription = () => {
-    if (!job.description) return '';
-    const parts = job.description.split('\n\n');
-    return parts.length > 1 ? parts[0] : job.description;
-  };
-
   // Extract custom fields if available
   const getCustomFields = () => {
     try {
@@ -63,9 +55,6 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
     title: z.string().min(1, {
       message: "Title is required",
     }),
-    description: z.string().min(1, {
-      message: "Description is required",
-    }),
     itemCount: z.coerce.number().int().min(0).optional(),
     subClientName: z.string().optional(),
     clientName: z.string().optional(),
@@ -75,7 +64,6 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: job.title,
-      description: getCleanDescription(),
       itemCount: job.itemCount,
       subClientName: job.subClientName || '',
       clientName: job.clientName || '',
@@ -84,10 +72,7 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Preserve custom fields if they exist
-    let finalDescription = values.description;
-    if (customFields) {
-      finalDescription = `${values.description}\n\n${JSON.stringify(customFields)}`;
-    }
+    let finalDescription = job.description || '';
     
     const updatedJob: Job = {
       ...job,
@@ -115,20 +100,6 @@ const EditJobForm: React.FC<EditJobFormProps> = ({ job, onUpdate }) => {
               <FormLabel>Job Title</FormLabel>
               <FormControl>
                 <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea {...field} rows={4} />
               </FormControl>
               <FormMessage />
             </FormItem>

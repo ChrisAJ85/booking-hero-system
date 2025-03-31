@@ -1,7 +1,8 @@
+
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building, Calendar, Clock, ExternalLink, FileUp, MapPin, Package } from 'lucide-react';
+import { Building, Calendar, Clock, ExternalLink, FileUp, Package } from 'lucide-react';
 import { Job } from '@/utils/data';
 import { format } from 'date-fns';
 
@@ -65,12 +66,6 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
   };
   
   const customFields = getCustomFields();
-  
-  const getCleanDescription = () => {
-    if (!job.description) return '';
-    const parts = job.description.split('\n\n');
-    return parts.length > 1 ? parts[0] : job.description;
-  };
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -92,10 +87,6 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         <p className="text-xs text-gray-500">Reference: {job.reference}</p>
       </CardHeader>
       <CardContent className="pb-2">
-        <p className="text-sm line-clamp-2 text-gray-600 mb-4">
-          {getCleanDescription()}
-        </p>
-        
         <div className="mb-3 flex items-center text-sm text-jobGray">
           <Building className="h-3.5 w-3.5 mr-1" />
           <span>
@@ -103,13 +94,6 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
             {job.clientName && <span className="text-xs text-gray-500 ml-1">({job.clientName})</span>}
           </span>
         </div>
-        
-        {customFields && customFields.collectionAddress && (
-          <div className="mb-2 flex items-start text-xs text-gray-600">
-            <MapPin className="h-3 w-3 mr-1 mt-0.5 text-jobGray" />
-            <span className="line-clamp-1">Collection: {customFields.collectionAddress.split('\n')[0]}</span>
-          </div>
-        )}
         
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
           <div className="flex items-center">
