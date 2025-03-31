@@ -63,7 +63,7 @@ const FileUploadJobForm: React.FC = () => {
         fileName: file.name,
         fileType: file.type,
         uploadDate: new Date().toISOString(),
-        customerName: user?.clientName || "Sample Customer",
+        customerName: user?.name || "Sample Customer",
         subClientName: user?.subClients?.[0]?.name || "Sample Subclient",
         mailingHouse: getRandomItem(mailingHouses),
         jobName: `Job from ${file.name}`,
@@ -109,7 +109,7 @@ const FileUploadJobForm: React.FC = () => {
         }],
         subClientId: user?.subClients?.[0]?.id || '',
         subClientName: user?.subClients?.[0]?.name || '',
-        clientName: user?.subClients?.[0]?.clientName || '',
+        clientName: user?.role === 'client' ? user.name : '',
       });
 
       setIsUploading(false);
