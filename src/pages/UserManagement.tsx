@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Sidebar from '@/components/Sidebar';
-import { useAuth, User, users, Client, clients, SubClient } from '@/utils/auth';
+import { useAuth, User, users, Client, clients, SubClient, UserStatus } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
 import { 
   Dialog, 
@@ -34,6 +34,7 @@ const UserManagement = () => {
     landlineNumber: '',
     businessName: '',
     role: 'user' as UserRole,
+    status: 'active' as UserStatus,
     allowedSubClients: [] as string[]
   });
 
@@ -102,6 +103,7 @@ const UserManagement = () => {
       landlineNumber: '',
       businessName: '',
       role: 'user',
+      status: 'active',
       allowedSubClients: []
     });
     setEditingUser(null);
@@ -122,6 +124,7 @@ const UserManagement = () => {
       landlineNumber: user.landlineNumber || '',
       businessName: user.businessName || '',
       role: user.role,
+      status: user.status || 'active',
       allowedSubClients: user.allowedSubClients || []
     });
     setDialogOpen(true);
@@ -155,6 +158,7 @@ const UserManagement = () => {
           landlineNumber: formData.landlineNumber,
           businessName: formData.businessName,
           role: formData.role,
+          status: formData.status,
           allowedSubClients: formData.allowedSubClients
         } : u
       );
@@ -175,6 +179,7 @@ const UserManagement = () => {
         landlineNumber: formData.landlineNumber,
         businessName: formData.businessName,
         role: formData.role,
+        status: formData.status,
         allowedSubClients: formData.allowedSubClients
       };
       
@@ -208,6 +213,29 @@ const UserManagement = () => {
     toast({
       title: "User Deleted",
       description: "User has been deleted successfully."
+    });
+  };
+
+  const handleToggleStatus = (userId: string, newStatus: UserStatus) => {
+    // Prevent suspending yourself
+    if (userId === currentUser?.id) {
+      toast({
+        title: "Cannot Suspend",
+        description: "You cannot suspend your own account.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const updatedUsers = usersList.map(u => 
+      u.id === userId ? { ...u, status: newStatus } : u
+    );
+    
+    setUsersList(updatedUsers);
+    
+    toast({
+      title: newStatus === 'active' ? "User Activated" : "User Suspended",
+      description: `User has been ${newStatus === 'active' ? 'activated' : 'suspended'} successfully.`
     });
   };
 
@@ -253,6 +281,7 @@ const UserManagement = () => {
                 allSubClients={allSubClients}
                 onEditUser={handleEditUser}
                 onDeleteUser={handleDeleteUser}
+                onToggleStatus={handleToggleStatus}
               />
             </div>
           </div>

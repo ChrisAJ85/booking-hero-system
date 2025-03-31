@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { User } from '@/utils/auth';
+import { User, UserStatus } from '@/utils/auth';
 import { 
   Table, 
   TableBody, 
@@ -10,7 +10,8 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { UserCog, UserX } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { UserCog, UserX, UserCheck } from 'lucide-react';
 import { 
   AlertDialog, 
   AlertDialogAction, 
@@ -35,6 +36,7 @@ interface UserTableProps {
   allSubClients: SubClientWithClient[];
   onEditUser: (user: User) => void;
   onDeleteUser: (userId: string) => void;
+  onToggleStatus: (userId: string, newStatus: UserStatus) => void;
 }
 
 const UserTable = ({ 
@@ -42,7 +44,8 @@ const UserTable = ({
   currentUserId, 
   allSubClients, 
   onEditUser, 
-  onDeleteUser 
+  onDeleteUser,
+  onToggleStatus
 }: UserTableProps) => {
   return (
     <Table>
@@ -53,13 +56,14 @@ const UserTable = ({
           <TableHead>Business</TableHead>
           <TableHead>Contact</TableHead>
           <TableHead>Role</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Sub-Clients</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {users.map(user => (
-          <TableRow key={user.id}>
+          <TableRow key={user.id} className={user.status === 'suspended' ? 'bg-gray-50' : ''}>
             <TableCell className="font-medium">{user.name}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.businessName || '-'}</TableCell>
@@ -68,6 +72,14 @@ const UserTable = ({
               {user.landlineNumber && <div className="text-sm text-gray-500">{user.landlineNumber}</div>}
             </TableCell>
             <TableCell className="capitalize">{user.role}</TableCell>
+            <TableCell>
+              <Badge 
+                variant={user.status === 'active' ? 'default' : 'secondary'}
+                className={user.status === 'active' ? 'bg-green-500' : 'bg-gray-500'}
+              >
+                {user.status === 'active' ? 'Active' : 'Suspended'}
+              </Badge>
+            </TableCell>
             <TableCell>
               {user.role === 'user' && user.allowedSubClients && user.allowedSubClients.length > 0 ? (
                 <div className="text-sm">
@@ -90,9 +102,30 @@ const UserTable = ({
                   variant="outline" 
                   size="sm" 
                   onClick={() => onEditUser(user)}
+                  disabled={user.id === currentUserId}
                 >
                   <UserCog className="h-4 w-4" />
                   <span className="sr-only">Edit</span>
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className={user.status === 'active' 
+                    ? "text-amber-500 border-amber-200 hover:bg-amber-50" 
+                    : "text-green-500 border-green-200 hover:bg-green-50"}
+                  onClick={() => onToggleStatus(
+                    user.id, 
+                    user.status === 'active' ? 'suspended' : 'active'
+                  )}
+                  disabled={user.id === currentUserId}
+                >
+                  {user.status === 'active' 
+                    ? <UserX className="h-4 w-4" /> 
+                    : <UserCheck className="h-4 w-4" />}
+                  <span className="sr-only">
+                    {user.status === 'active' ? 'Suspend' : 'Activate'}
+                  </span>
                 </Button>
                 
                 <AlertDialog>

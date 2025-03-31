@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
 
 export type UserRole = 'admin' | 'manager' | 'user';
+export type UserStatus = 'active' | 'suspended';
 
 export interface SubClient {
   id: string;
@@ -25,6 +26,7 @@ export interface User {
   landlineNumber?: string;
   businessName?: string;
   role: UserRole;
+  status: UserStatus; // Added user status field
   allowedSubClients?: string[]; // IDs of sub-clients this user can book jobs for
   subClients?: Array<{ id: string; name: string; clientName: string }>; // For fetching user's allowed sub-clients
 }
@@ -47,7 +49,8 @@ export const users: User[] = [
     name: 'Admin User', 
     email: 'admin@example.com', 
     mobileNumber: '07700 900123',
-    role: 'admin' 
+    role: 'admin',
+    status: 'active'
   },
   { 
     id: '2', 
@@ -57,7 +60,8 @@ export const users: User[] = [
     email: 'manager@example.com', 
     mobileNumber: '07700 900456',
     businessName: 'Management Ltd',
-    role: 'manager' 
+    role: 'manager',
+    status: 'active' 
   },
   { 
     id: '3', 
@@ -69,6 +73,7 @@ export const users: User[] = [
     landlineNumber: '01234 567890',
     businessName: 'Client Company Ltd',
     role: 'user',
+    status: 'active',
     allowedSubClients: ['1', '2'] 
   },
 ];
@@ -138,6 +143,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const foundUser = users.find(u => u.email === email);
     
     if (foundUser && password === 'password') { // Simple password check for demo
+      // Check if user is suspended
+      if (foundUser.status === 'suspended') {
+        toast({
+          title: "Account Suspended",
+          description: "Your account has been suspended. Please contact an administrator.",
+          variant: "destructive"
+        });
+        return false;
+      }
+      
       // Add subClients property to the user based on allowedSubClients
       const userWithSubClients = { ...foundUser };
       

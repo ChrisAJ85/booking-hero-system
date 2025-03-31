@@ -1,11 +1,15 @@
 
-import React from 'react';
-import { UserRole } from '@/utils/auth';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { ChangeEvent } from 'react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 import SubClientSelector from './SubClientSelector';
+import { UserRole, UserStatus } from '@/utils/auth';
 
 interface SubClientWithClient {
   id: string;
@@ -13,7 +17,7 @@ interface SubClientWithClient {
   clientName: string;
 }
 
-interface UserFormData {
+interface FormData {
   firstName: string;
   lastName: string;
   email: string;
@@ -21,13 +25,14 @@ interface UserFormData {
   landlineNumber: string;
   businessName: string;
   role: UserRole;
+  status: UserStatus;
   allowedSubClients: string[];
 }
 
 interface UserFormProps {
-  formData: UserFormData;
+  formData: FormData;
   subClients: SubClientWithClient[];
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onRoleChange: (value: string) => void;
   onSubClientChange: (subClientId: string, isChecked: boolean) => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -45,96 +50,158 @@ const UserForm = ({
   onCancel,
   isEditing
 }: UserFormProps) => {
+  const handleStatusChange = (value: string) => {
+    const event = {
+      target: {
+        name: 'status',
+        value: value
+      }
+    } as ChangeEvent<HTMLInputElement>;
+    
+    onInputChange(event);
+  };
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4 pt-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form onSubmit={onSubmit} className="space-y-4 mt-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="firstName">First Name*</Label>
-          <Input
+          <label htmlFor="firstName" className="text-sm font-medium">
+            First Name <span className="text-red-500">*</span>
+          </label>
+          <input
             id="firstName"
             name="firstName"
+            type="text"
             value={formData.firstName}
             onChange={onInputChange}
+            className="w-full p-2 border rounded-md"
             required
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="lastName">Last Name*</Label>
-          <Input
+          <label htmlFor="lastName" className="text-sm font-medium">
+            Last Name <span className="text-red-500">*</span>
+          </label>
+          <input
             id="lastName"
             name="lastName"
+            type="text"
             value={formData.lastName}
             onChange={onInputChange}
+            className="w-full p-2 border rounded-md"
             required
           />
         </div>
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="email">Email Address*</Label>
-        <Input
+        <label htmlFor="email" className="text-sm font-medium">
+          Email <span className="text-red-500">*</span>
+        </label>
+        <input
           id="email"
           name="email"
           type="email"
           value={formData.email}
           onChange={onInputChange}
+          className="w-full p-2 border rounded-md"
           required
         />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="mobileNumber">Mobile Number</Label>
-          <Input
+          <label htmlFor="mobileNumber" className="text-sm font-medium">
+            Mobile Number
+          </label>
+          <input
             id="mobileNumber"
             name="mobileNumber"
+            type="tel"
             value={formData.mobileNumber}
             onChange={onInputChange}
+            className="w-full p-2 border rounded-md"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="landlineNumber">Landline Number</Label>
-          <Input
+          <label htmlFor="landlineNumber" className="text-sm font-medium">
+            Landline Number
+          </label>
+          <input
             id="landlineNumber"
             name="landlineNumber"
+            type="tel"
             value={formData.landlineNumber}
             onChange={onInputChange}
+            className="w-full p-2 border rounded-md"
           />
         </div>
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="businessName">Business Name</Label>
-        <Input
+        <label htmlFor="businessName" className="text-sm font-medium">
+          Business Name
+        </label>
+        <input
           id="businessName"
           name="businessName"
+          type="text"
           value={formData.businessName}
           onChange={onInputChange}
+          className="w-full p-2 border rounded-md"
         />
       </div>
       
-      <div className="space-y-2">
-        <Label>Role</Label>
-        <Select defaultValue={formData.role} onValueChange={onRoleChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select role" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="user">User</SelectItem>
-            <SelectItem value="manager">Manager</SelectItem>
-            <SelectItem value="admin">Admin</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <label htmlFor="role" className="text-sm font-medium">
+            Role
+          </label>
+          <Select
+            value={formData.role}
+            onValueChange={onRoleChange}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="admin">Admin</SelectItem>
+              <SelectItem value="manager">Manager</SelectItem>
+              <SelectItem value="user">User</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="space-y-2">
+          <label htmlFor="status" className="text-sm font-medium">
+            Status
+          </label>
+          <Select
+            value={formData.status}
+            onValueChange={handleStatusChange}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="suspended">Suspended</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       
       {formData.role === 'user' && (
-        <SubClientSelector 
-          subClients={subClients}
-          selectedSubClients={formData.allowedSubClients}
-          onChange={onSubClientChange}
-        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Allowed Sub-Clients</label>
+          <SubClientSelector
+            subClients={subClients}
+            selectedSubClients={formData.allowedSubClients}
+            onChange={onSubClientChange}
+          />
+        </div>
       )}
       
       <div className="flex justify-end space-x-2 pt-4">
