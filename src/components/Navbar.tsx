@@ -17,7 +17,6 @@ const Navbar: React.FC = () => {
             alt="Job Booking System Logo" 
             className="h-8 mr-3"
           />
-          <Link to="/dashboard" className="text-xl font-bold text-jobRed">Job Booking System</Link>
         </div>
         
         <div className="flex items-center space-x-2">
