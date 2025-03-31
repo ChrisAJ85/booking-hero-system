@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/utils/auth';
 import { Button } from '@/components/ui/button';
-import { Calendar, FileText, Search, User, PieChart } from 'lucide-react';
+import { Calendar, FileText, Search, User, PieChart, Brush } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Navbar: React.FC = () => {
@@ -39,6 +39,11 @@ const Navbar: React.FC = () => {
           <Link to="/mailmark-data" className="flex items-center hover:text-jobRed">
             <PieChart className="mr-1 h-4 w-4" />
             <span>Mailmark</span>
+          </Link>
+          
+          <Link to="/artwork-submission" className="flex items-center hover:text-jobRed">
+            <Brush className="mr-1 h-4 w-4" />
+            <span>Artwork</span>
           </Link>
           
           <div className="flex items-center space-x-2">

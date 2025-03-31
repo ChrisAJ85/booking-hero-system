@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from 'react-router-dom';
-import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart } from 'lucide-react';
+import { Building, Calendar, Clock, FileText, LayoutDashboard, Search, User, Users, BookPlus, PieChart, Brush } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/utils/auth';
 
@@ -32,6 +32,18 @@ const Sidebar: React.FC = () => {
       icon: <PieChart className="h-5 w-5" />,
       path: '/mailmark-data',
       allowed: true
+    },
+    {
+      name: 'Artwork Submission',
+      icon: <Brush className="h-5 w-5" />,
+      path: '/artwork-submission',
+      allowed: true
+    },
+    {
+      name: 'Artwork Approval',
+      icon: <Brush className="h-5 w-5" />,
+      path: '/artwork-approval',
+      allowed: isAdmin()
     },
     {
       name: 'UCID & SCID Requests',
