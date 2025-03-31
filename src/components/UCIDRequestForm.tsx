@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   Form,
   FormControl,
@@ -258,162 +259,164 @@ const UCIDRequestForm = () => {
             )}
             
             {requestType === 'SCID' && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="dateRequested"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date Requested</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center">
-                          <Calendar className="mr-2 h-4 w-4 text-jobGray" />
-                          <Input 
-                            type="date" 
-                            {...field} 
-                            disabled 
-                            className="bg-gray-100" 
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="supplyChainId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Supply Chain ID</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center">
-                          <Hash className="mr-2 h-4 w-4 text-jobGray" />
-                          <Input 
-                            placeholder="Supply chain ID" 
-                            {...field} 
-                            required 
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="supplyChainType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Supply Chain Type</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
+              <ScrollArea className="h-[400px] pr-4 -mr-4">
+                <div className="pr-4 space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="dateRequested"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Date Requested</FormLabel>
                         <FormControl>
                           <div className="flex items-center">
-                            <Tag className="mr-2 h-4 w-4 text-jobGray absolute left-3 z-10" />
-                            <SelectTrigger className="pl-10">
-                              <SelectValue placeholder="Select type" />
-                            </SelectTrigger>
+                            <Calendar className="mr-2 h-4 w-4 text-jobGray" />
+                            <Input 
+                              type="date" 
+                              {...field} 
+                              disabled 
+                              className="bg-gray-100" 
+                            />
                           </div>
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="2D">2D</SelectItem>
-                          <SelectItem value="4 state">4 state</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="supplyChainName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Supply Chain Name</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center">
-                          <Building className="mr-2 h-4 w-4 text-jobGray" />
-                          <Input 
-                            placeholder="Supply chain name" 
-                            {...field} 
-                            required 
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="mailOriginator"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mail Originator</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center">
-                          <User className="mr-2 h-4 w-4 text-jobGray" />
-                          <Input 
-                            placeholder="Mail originator" 
-                            {...field} 
-                            required 
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="mailOriginatorParticipantId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mail Originator Participant ID</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center">
-                          <UserCog className="mr-2 h-4 w-4 text-jobGray" />
-                          <Input 
-                            placeholder="Mail originator participant ID" 
-                            {...field} 
-                            required 
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="mailingAgent"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mailing Agent</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center">
-                          <User className="mr-2 h-4 w-4 text-jobGray" />
-                          <Input 
-                            placeholder="Mailing agent" 
-                            {...field} 
-                            required 
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="supplyChainId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Supply Chain ID</FormLabel>
+                        <FormControl>
+                          <div className="flex items-center">
+                            <Hash className="mr-2 h-4 w-4 text-jobGray" />
+                            <Input 
+                              placeholder="Supply chain ID" 
+                              {...field} 
+                              required 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="supplyChainType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Supply Chain Type</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <div className="flex items-center">
+                              <Tag className="mr-2 h-4 w-4 text-jobGray absolute left-3 z-10" />
+                              <SelectTrigger className="pl-10">
+                                <SelectValue placeholder="Select type" />
+                              </SelectTrigger>
+                            </div>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="2D">2D</SelectItem>
+                            <SelectItem value="4 state">4 state</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="supplyChainName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Supply Chain Name</FormLabel>
+                        <FormControl>
+                          <div className="flex items-center">
+                            <Building className="mr-2 h-4 w-4 text-jobGray" />
+                            <Input 
+                              placeholder="Supply chain name" 
+                              {...field} 
+                              required 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="mailOriginator"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Mail Originator</FormLabel>
+                        <FormControl>
+                          <div className="flex items-center">
+                            <User className="mr-2 h-4 w-4 text-jobGray" />
+                            <Input 
+                              placeholder="Mail originator" 
+                              {...field} 
+                              required 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="mailOriginatorParticipantId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Mail Originator Participant ID</FormLabel>
+                        <FormControl>
+                          <div className="flex items-center">
+                            <UserCog className="mr-2 h-4 w-4 text-jobGray" />
+                            <Input 
+                              placeholder="Mail originator participant ID" 
+                              {...field} 
+                              required 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="mailingAgent"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Mailing Agent</FormLabel>
+                        <FormControl>
+                          <div className="flex items-center">
+                            <User className="mr-2 h-4 w-4 text-jobGray" />
+                            <Input 
+                              placeholder="Mailing agent" 
+                              {...field} 
+                              required 
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </ScrollArea>
             )}
             
             <FormField
@@ -460,3 +463,4 @@ const UCIDRequestForm = () => {
 };
 
 export default UCIDRequestForm;
+
